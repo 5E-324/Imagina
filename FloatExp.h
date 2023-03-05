@@ -28,11 +28,11 @@ struct FExpDouble {
 	FExpDouble() : Mantissa(1.0), Exponent(-0x10000000000000) {}
 
 	inline void constexpr Normalize() {
-		uint64_t MantissaI64 = std::_Bit_cast<uint64_t>(Mantissa);
+		uint64_t MantissaI64 = std::bit_cast<uint64_t>(Mantissa);
 		Exponent = Exponent + int64_t(MantissaI64 << 1 >> 53) - 0x3FF;
 		if (Mantissa == 0.0) Exponent = -0x10000000000000;
 		MantissaI64 = (MantissaI64 & ~ExponentMask) | ExponentZeroOffset;
-		Mantissa = std::_Bit_cast<double>(MantissaI64);
+		Mantissa = std::bit_cast<double>(MantissaI64);
 	}
 
 	inline constexpr FExpDouble(const float			&n)	: Mantissa(double(n)), Exponent(0) { Normalize(); }
