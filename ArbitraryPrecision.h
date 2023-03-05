@@ -73,4 +73,7 @@ inline void OMIMT(mpf_class &ZR, mpf_class &ZI, const mpf_class &CR, const mpf_c
 	static_assert(ThreadIndex >= -2 && ThreadIndex < 2);
 }
 
+inline bool isinf(const mpf_class x) { return false; }
+inline bool isnan(const mpf_class x) { return false; }
+
 #endif
