@@ -82,7 +82,7 @@ class HInfLAEvaluator::FeatureFinder : public Evaluator::FeatureFinder {
 	public:
 		virtual std::wstring_view Name() override;
 		virtual std::wstring_view Information() override;
-		virtual IntIter ItLimForZoomLevel(HRReal HalfH);
+		virtual IntIter ItLimForZoomLevel(HRReal HalfH) override;
 		virtual void GetCoordinate(HRReal &X, HRReal &Y) override;
 		virtual bool GetRadius(HRReal &targetRadius) override;
 		virtual bool CanLocatePrecisely() override;
@@ -181,9 +181,9 @@ class HInfLAEvaluator::FeatureFinder : public Evaluator::FeatureFinder {
 		HPReal CR, CI;
 
 	public:
-		virtual std::string_view GetDescription() const;
+		virtual std::string_view GetDescription() const override;
 		virtual bool GetProgress(SRReal &Numerator, SRReal &Denoninator) const override;
-		virtual std::string_view GetDetailedProgress();
+		virtual std::string_view GetDetailedProgress() override;
 		virtual void Execute(size_t ThreadID) override;
 		virtual void Cancel() override;
 
