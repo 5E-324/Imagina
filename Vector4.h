@@ -320,3 +320,9 @@ inline std::complex<T> Select(mask64x4 sel, std::complex<T> t, std::complex<T> f
 inline dvec4 ArrayToVec4(double *x) {
 	return dvec4(x);
 }
+
+inline bool isinf(const dvec4 &x) { return false; }
+inline bool isnan(const dvec4 &x) { return false; }
+inline dvec4 copysign(const dvec4 &mag, const dvec4 &sgn) {
+	return dvec4(_mm256_or_pd(mag.abs().ymm, _mm256_and_pd(_mm256_set1_pd(-0.0), sgn.ymm)));
+}
