@@ -1,5 +1,6 @@
 #pragma once
 
+#include <vector>
 enum class FractalTypeEnum;
 class FractalContext;
 
