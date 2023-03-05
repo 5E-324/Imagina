@@ -72,6 +72,7 @@ struct dvec4 {
 	inline dvec4() = default;
 	inline dvec4(__m256d n) : ymm(n) {}
 	inline dvec4(double n) : ymm(_mm256_set1_pd(n)) {}
+	inline dvec4(int n) : dvec4(double(n)) {}
 	inline dvec4(double x, double y, double z, double w) : ymm(_mm256_set_pd(w, z, y, x)) {}
 	inline explicit dvec4(const double *x) : ymm(_mm256_set_pd(x[3], x[2], x[1], x[0])) {}
 
