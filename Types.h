@@ -282,4 +282,10 @@ struct EvaluationParameters {
 	Coordinate CenterCoordinate;
 	RelLocation Location;
 };
+
+struct not_implemented : public std::exception
+{
+	virtual const char *what() const noexcept override { return "Not implemented"; }
+};
+
 #endif

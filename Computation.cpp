@@ -12,7 +12,7 @@ std::string_view Task::GetDescription() const {
 }
 
 void ParallelTask::Execute() {
-	throw std::exception("Not implemented");
+	throw not_implemented{};
 }
 
 void ParallelTask::Execute(unused size_t ThreadID) {
