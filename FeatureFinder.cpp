@@ -529,7 +529,8 @@ Evaluator::Feature *HInfLAEvaluator::FeatureFinder::FindFeature(HRReal x, HRReal
 
 	}
 
-	if (std::abs(y + Ref.Refc.imag()) < radius) {
+	using std::abs;
+	if (abs(y + Ref.Refc.imag()) < radius) {
 		Feature->X = x;
 		Feature->Y = -Ref.Refc.imag();
 		Feature->type = RealAxis;

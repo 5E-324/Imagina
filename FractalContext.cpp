@@ -106,7 +106,7 @@ void FractalContext::ChangeLocation(RelLocation NewLocation) {
 	if (NewLocation.X == CurrentLocation.X && NewLocation.Y == CurrentLocation.Y && NewLocation.HalfH == CurrentLocation.HalfH) {
 		return;
 	}
-	if (LockReference && (std::abs(NewLocation.X) > NewLocation.HalfH * 0x1p20_hr || std::abs(NewLocation.Y) > NewLocation.HalfH * HRReal(1ull << 20))) {
+	if (LockReference && (abs(NewLocation.X) > NewLocation.HalfH * 0x1p20_hr || abs(NewLocation.Y) > NewLocation.HalfH * HRReal(1ull << 20))) {
 		return;
 	}
 	if (NewLocation.HalfH <= CurrentLocation.HalfH * 0.5_hr || NewLocation.HalfH >= CurrentLocation.HalfH * 2.0_hr) {
@@ -182,8 +182,8 @@ void FractalContext::ChangeCenter() {
 
 	RelLocation PrevLocation = CurrentLocation;
 	if (HasPredictedCenter
-		&& std::abs(CurrentLocation.X - PredictedCenter.X) < CurrentLocation.HalfH * 2
-		&& std::abs(CurrentLocation.Y - PredictedCenter.Y) < CurrentLocation.HalfH * 2) {
+		&& abs(CurrentLocation.X - PredictedCenter.X) < CurrentLocation.HalfH * 2
+		&& abs(CurrentLocation.Y - PredictedCenter.Y) < CurrentLocation.HalfH * 2) {
 		CenterCoordinate.X += PredictedCenter.X;
 		CenterCoordinate.Y += PredictedCenter.Y;
 		CurrentLocation.X -= PredictedCenter.X;
@@ -358,7 +358,7 @@ void FractalContext::Update() {
 			}
 			ParameterChanged = false;
 		} else {
-			HRReal Distance = std::max(std::abs(EvalLocation.X), std::abs(EvalLocation.Y));
+			HRReal Distance = std::max(abs(EvalLocation.X), abs(EvalLocation.Y));
 			if ((!reference || Distance > EvalLocation.HalfH * 64 || EvalLocation.HalfH * HRReal(1.0 / 512.0) < reference->AbsolutePrecision || ParameterChanged || RecomputeReference) && /*!ReferenceWorker.joinable() &&*/ !ReferenceTask) {
 				ChangeCenter();
 				CenterChanged = false;
