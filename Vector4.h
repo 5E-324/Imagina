@@ -321,3 +321,15 @@ inline std::complex<T> Select(mask64x4 sel, std::complex<T> t, std::complex<T> f
 inline dvec4 ArrayToVec4(double *x) {
 	return dvec4(x);
 }
+
+mask64x4 isinf(const dvec4 &x) { return dvec4(1) / x == dvec4(0); }
+mask64x4 isnan(const dvec4 &x) { return ! (x == x); }
+dvec4 copysign(const dvec4 &mag, const dvec4 &sgn)
+{
+	dvec4 result;
+	for (int i = 0; i < 4; ++i)
+	{
+		result.data[i] = std::copysign(mag.data[i], sgn.data[i]);
+	}
+	return result;
+}
