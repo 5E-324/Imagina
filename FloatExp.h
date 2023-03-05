@@ -89,6 +89,10 @@ struct FExpDouble {
 		}
 	}
 
+	inline constexpr explicit operator int() const {
+		return double(*this);
+	}
+
 	inline constexpr FExpDouble operator+() const {
 		return *this;
 	}
