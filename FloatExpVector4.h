@@ -229,3 +229,13 @@ inline DExpVec4 HRExp<DExpVec4>(dvec4 x) {
 inline DExpVec4 ArrayToVec4(FExpDouble *x) {
 	return DExpVec4(x);
 }
+
+inline mask64x4 isinf(const DExpVec4 &x) { return isinf(x.Mantissa); }
+inline mask64x4 isnan(const DExpVec4 &x) { return isnan(x.Mantissa); }
+inline DExpVec4 copysign(const DExpVec4 &mag, const DExpVec4 &sgn)
+{
+	DExpVec4 result;
+	result.Exponent = mag.Exponent;
+	result.Mantissa = copysign(mag.Mantissa, sgn.Mantissa);
+	return result;
+}
