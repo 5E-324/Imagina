@@ -5,7 +5,12 @@
 
 #ifdef _WIN32
 #define NOMINMAX
+#if __has_include(<Windows.h>)
 #include <Windows.h>
+#else
+#include <windows.h>
+#endif
+
 #define GLEW_STATIC
 #else
 #define GL_GLEXT_PROTOTYPES
