@@ -69,7 +69,7 @@ struct dvec4 {
 		};
 	};
 	struct mul_result;
-	inline dvec4() : ymm(_mm256_set1_pd(0.0)) {}
+	inline dvec4() = default;
 	inline dvec4(__m256d n) : ymm(n) {}
 	inline dvec4(double n) : ymm(_mm256_set1_pd(n)) {}
 	inline dvec4(double x, double y, double z, double w) : ymm(_mm256_set_pd(w, z, y, x)) {}
@@ -218,8 +218,8 @@ struct i64vec4 {
 			int64_t x, y, z, w;
 		};
 	};
-
-	inline			i64vec4()											: ymm(_mm256_set1_epi64x(0)) {}
+	
+	inline			i64vec4() = default;
 	inline			i64vec4(__m256i n)									: ymm(n) {}
 	inline			i64vec4(int64_t n)									: ymm(_mm256_set1_epi64x(n)) {}
 	inline			i64vec4(int64_t x, int64_t y, int64_t z, int64_t w)	: ymm(_mm256_set_epi64x(w, z, y, x)) {}
