@@ -7,7 +7,9 @@
 #define PERIOD_DETECTION_METHOD2
 
 template<typename T> inline T ChebyshevNorm(std::complex<T> z) {
-	return std::max(std::abs(z.real()), std::abs(z.imag()));
+	using std::max;
+	using std::abs;
+	return max(abs(z.real()), abs(z.imag()));
 }
 
 template<> inline DExpVec4 ChebyshevNorm<DExpVec4>(std::complex<DExpVec4> z) {
