@@ -2,6 +2,7 @@
 #include "FractalContext.h"
 #include <vector>
 #include <sstream>
+#include <iomanip>
 #include <barrier>
 
 Evaluator::FeatureFinder *HInfLAEvaluator::GetFeatureFinder() {
