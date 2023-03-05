@@ -11,8 +11,13 @@ std::string_view Task::GetDescription() const {
 	return "(no description)"sv;
 }
 
+struct not_implemented : public std::exception
+{
+	virtual const char *what() const noexcept override { return "Not implemented"; }
+};
+
 void ParallelTask::Execute() {
-	throw std::exception("Not implemented");
+	throw not_implemented{};
 }
 
 void ParallelTask::Execute(unused size_t ThreadID) {
