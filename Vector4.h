@@ -304,7 +304,6 @@ inline mask64x4 Select(mask64x4 sel, mask64x4 t, mask64x4 f) { return _mm256_ble
 inline dvec4 Select(mask64x4 sel, dvec4 t, dvec4 f) { return _mm256_blendv_pd(f, t, sel); }
 inline i64vec4 Select(mask64x4 sel, i64vec4 t, i64vec4 f) { return _mm256_blendv_epi8(f, t, sel); }
 inline DExpVec4 Select(mask64x4 sel, DExpVec4 t, DExpVec4 f);
-#include "FloatExpVector4.h"
 
 inline i64vec4 dvec4::casti64() const { return _mm256_castpd_si256(ymm); }
 inline i64vec4 dvec4::ToInt64() const {
