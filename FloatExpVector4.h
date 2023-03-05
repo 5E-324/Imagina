@@ -85,6 +85,7 @@ struct DExpVec4 {
 	DExpVec4() : Mantissa(_mm256_set1_pd(1.0)), Exponent(-0x100000000000) {};
 
 	inline DExpVec4(double x) noexcept : Mantissa(_mm256_set1_pd(x)), Exponent(_mm256_setzero_si256()) { Normalize(); }
+	inline DExpVec4(int x) noexcept : DExpVec4(double(x)) {}
 	inline DExpVec4(double x, double y, double z, double w) noexcept
 		: Mantissa(_mm256_set_pd(w, z, y, x)), Exponent(_mm256_setzero_si256()) {
 		Normalize();
