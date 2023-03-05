@@ -282,4 +282,8 @@ struct EvaluationParameters {
 	Coordinate CenterCoordinate;
 	RelLocation Location;
 };
+
+inline bool isinf(const __gmp_expr<mpf_t, mpf_t> x) { return false; }
+inline bool isnan(const __gmp_expr<mpf_t, mpf_t> x) { return false; }
+
 #endif
