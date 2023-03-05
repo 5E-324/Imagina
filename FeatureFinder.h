@@ -141,9 +141,9 @@ class HInfLAEvaluator::FeatureFinder : public Evaluator::FeatureFinder {
 			HRReal HRScalingFactor = 1.0_hr / InvScalingFactor;
 			ScalingFactor = SRReal(HRScalingFactor);
 
-			c = x.c; dc = x.dc;
-			z = x.z; dz = x.dz; zcoeff = x.zcoeff * HRScalingFactor; dzdc = x.dzdc * HRScalingFactor;
-			ZAfterPrePeriod = x.ZAfterPrePeriod; DzdcAfterPrePeriod = x.DzdcAfterPrePeriod * HRScalingFactor;
+			c = convert<complex>(x.c); dc = convert<complex>(x.dc);
+			z = convert<complex>(x.z); dz = convert<complex>(x.dz); zcoeff = convert<complex>(x.zcoeff * HRScalingFactor); dzdc = convert<complex>(x.dzdc * HRScalingFactor);
+			ZAfterPrePeriod = convert<complex>(x.ZAfterPrePeriod); DzdcAfterPrePeriod = convert<complex>(x.DzdcAfterPrePeriod * HRScalingFactor);
 			SqrMisiurewiczCaptureRadius = real(x.SqrMisiurewiczCaptureRadius * SqrInvScalingFactor);
 			SqrNearLinearRadius = real(x.SqrNearLinearRadius * SqrInvScalingFactor);
 

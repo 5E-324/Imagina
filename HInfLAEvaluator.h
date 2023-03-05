@@ -201,7 +201,7 @@ struct LAInfo {
 		Result.ZCoeff = ZCoeff;
 		Result.CCoeff = HRComplex(ZCoeff) * HRComplex(CCoeff);
 		Result.InvZCoeff = 1.0_hr / HRComplex(Result.ZCoeff);
-		Result.RefC = HRComplex(Next.Ref) * HRComplex(ZCoeff);
+		Result.RefC = convert<SRComplex>(HRComplex(Next.Ref) * HRComplex(ZCoeff));
 		Result.SqrEscapeRadius = SRReal(std::min(norm(HRComplex(ZCoeff)) * LAThreshold, 0x1.0p256_hr));
 		Result.ThresholdC = std::min(HRReal(LAThresholdC), 0x1.0p256_hr / ChebyshevNorm(Result.CCoeff));
 

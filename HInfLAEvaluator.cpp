@@ -291,7 +291,7 @@ void HInfLAEvaluator::ReferenceGenerationContext<real>::GenerateReference(const 
 	real radius = real(FContext.CurrentLocation.HalfH) * 2.0;
 
 	reference.MaxIt = parameters.MaxIterations;
-	reference.Refc = std::complex<HRReal>{ parameters.CenterCoordinate.X, parameters.CenterCoordinate.Y };
+	reference.Refc = SRComplex{ convert<SRReal>(parameters.CenterCoordinate.X), convert<SRReal>(parameters.CenterCoordinate.Y) };
 
 	reference.IsPeriodic = false;
 	reference.UseAT = false;
@@ -395,7 +395,7 @@ void HInfLAEvaluator::ReferenceGenerationContext<real>::CalculateOrbit(const Eva
 	HPReal2 ZR = CR;
 	HPReal2 ZI = CI;
 	complex z = { convert<real>(ZR), convert<real>(ZI) };
-	reference.Refc = std::complex<HRReal>{ CR, CI };
+	reference.Refc = SRComplex{ convert<SRReal>(CR), convert<SRReal>(CI) };
 	reference.Ref.Append(complex(0.0));
 
 	size_t i = 1;
@@ -944,7 +944,7 @@ void HInfLAEvaluator::ReferenceGenerationContext<real>::GenerateApproximationDat
 			reference.DoublePrecisionPT = true;
 			LAReference<double> &DPRef = reinterpret_cast<LAReference<double>&>(reference);
 			for (size_t i = 0; i <= reference.RefIt; i++) {
-				DPRef.Ref[i] = reference.Ref[i];
+				DPRef.Ref[i] = convert<SRComplex>(reference.Ref[i]);
 			}
 		}
 	}
