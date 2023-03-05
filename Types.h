@@ -286,4 +286,10 @@ struct EvaluationParameters {
 inline bool isinf(const __gmp_expr<mpf_t, mpf_t> x) { return false; }
 inline bool isnan(const __gmp_expr<mpf_t, mpf_t> x) { return false; }
 
+template <typename To, typename From>
+std::complex<To> recomplex(const std::complex<From> &z)
+{
+        return std::complex<To>(To(z.real()), To(z.imag()));
+}
+
 #endif
