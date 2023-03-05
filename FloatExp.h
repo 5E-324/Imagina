@@ -336,8 +336,44 @@ inline FExpDouble pow2(const double &n) {
 	return Result;
 }
 
-namespace std {
-	inline FloatExp abs(const FloatExp &n) {
-		return n.abs();
-	}
+inline FloatExp abs(const FloatExp &n) {
+	return n.abs();
+}
+
+inline FloatExp fabs(const FloatExp &n) {
+	return n.abs();
+}
+
+inline FloatExp copysign(const FloatExp &mag, const FloatExp &sgn) {
+	FloatExp Result;
+	Result.Exponent = mag.Exponent;
+	Result.Mantissa = std::copysign(mag.Mantissa, sgn.Mantissa);
+	return Result;
+}
+
+inline FloatExp scalbn(const FloatExp &x, int e) {
+	FloatExp Result;
+	Result.Exponent = x.Exponent + e; // FIXME handle overflow
+	Result.Mantissa = x.Mantissa;
+	return Result;
+}
+
+inline bool isfinite(const FloatExp &x) {
+	return isfinite(x.Mantissa);
+}
+
+inline bool isnan(const FloatExp &x) {
+	return isnan(x.Mantissa);
+}
+
+inline bool isinf(const FloatExp &x) {
+	return isinf(x.Mantissa);
+}
+
+inline FloatExp fmax(const FloatExp &a, const FloatExp &b) {
+	return a > b ? a : b;
+}
+
+inline FloatExp logb(const FloatExp &x) {
+	return logb(x.Mantissa) + x.Exponent;
 }
