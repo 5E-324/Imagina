@@ -675,7 +675,7 @@ bool HInfLAEvaluator::ReferenceGenerationContext<real>::CreateLAFromOrbit_MT(HRR
 			}
 		}
 		});
-	auto Worker = [Period, &Start, &reference, &LAs, &LAIs](size_t ThreadID) {
+	auto Worker = [Period, &Start, &LAs, &LAIs, this](size_t ThreadID) {
 		size_t j = reference.RefIt * ThreadID / ThreadCount;
 		size_t End = reference.RefIt * (ThreadID + 1) / ThreadCount;
 		LAInfo<real> LA_ = LAInfo<real>(reference.Ref[j]);
