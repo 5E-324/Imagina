@@ -12,7 +12,7 @@
 HInfLAEvaluator::JuliaPixel HInfLAEvaluator::JuliaMipmaps::Sample(HRComplex z, HRReal PixelSize) {
 	SRComplex SamplePosition = log(z);
 
-	HRReal HRPixelSizeRatio = (PixelSize) / (sqrt(norm(z)) * this->PixelSize);
+	HRReal HRPixelSizeRatio = (PixelSize) / (sqrt(std::norm(z)) * this->PixelSize);
 	SRReal PixelSizeRatio = SRReal(HRPixelSizeRatio);
 	SRReal MipmapLevel = log2(PixelSizeRatio);
 	Int MipmapLevelI = floor(MipmapLevel);
@@ -172,7 +172,7 @@ template<typename real>__declspec(noinline) void HInfLAEvaluator::LoadCompressed
 		for (size_t i = End; i > Begin; ) {
 			i--;
 			dzdc *= Ref.Ref[i] * real(2.0);
-			Ref.Ref[i] += diff * (conj(dzdc) * (ScalingFactor / norm(dzdc)));
+			Ref.Ref[i] += diff * (conj(dzdc) * (ScalingFactor / std::norm(dzdc)));
 		}
 	};
 	size_t i = 0;
@@ -421,7 +421,7 @@ void HInfLAEvaluator::ReferenceGenerationContext<real>::CalculateOrbit(const Eva
 		dzdc = real(2.0) * z * dzdc + real(1.0);
 		z = complex{ convert<real>(ZR), convert<real>(ZI) };
 
-		real Magnitude = norm(z);
+		real Magnitude = std::norm(z);
 
 		if (Magnitude > 5.0) {
 			i++;
@@ -1055,19 +1055,19 @@ void HInfLAEvaluator::FreeReference(Reference *reference) {
 template<typename real, bool EvaluateDzdc, bool EvaluateDzdz>
 void HInfLAEvaluator::EvaluationContext<real, EvaluateDzdc, EvaluateDzdz>::TrySampleJulia(mask &ActiveMask) {
 	if (!Global::HighQuality || !Ref.Julia.Maps) return;
-	vreal Magnitude = norm(z);
+	vreal Magnitude = std::norm(z);
 	mask cmp = ActiveMask
 		&& SamplingEnabledMask
-		&& Magnitude * SqrJuliaHalfPixelSize < norm(derivatives::dzdc) * SqrPixScale
+		&& Magnitude * SqrJuliaHalfPixelSize < std::norm(derivatives::dzdc) * SqrPixScale
 		&& Magnitude > vreal(SqrJuliaMinMagZ)
 		&& Magnitude < vreal(SqrJuliaMaxMagZ);
-	mask SamplingShouldDisable = Magnitude * SqrJuliaPixelSize * vreal(8.0) < norm(derivatives::dzdc) * SqrPixScale && Magnitude < vreal(SqrJuliaMinMagZ);
+	mask SamplingShouldDisable = Magnitude * SqrJuliaPixelSize * vreal(8.0) < std::norm(derivatives::dzdc) * SqrPixScale && Magnitude < vreal(SqrJuliaMinMagZ);
 	SamplingDisablingMask = SamplingShouldDisable || SamplingDisablingMask;
 	if (bool(cmp)) {
 		SamplingMask = SamplingMask || cmp;
 
-		mask DirectSamplingMask = cmp && Magnitude * SqrJuliaPixelSize < norm(derivatives::dzdc) * SqrPixScale;
-		mask DirectSamplingMask2 = cmp && Magnitude * SqrJuliaPixelSize * vreal(16.0) < norm(derivatives::dzdc) *SqrPixScale;
+		mask DirectSamplingMask = cmp && Magnitude * SqrJuliaPixelSize < std::norm(derivatives::dzdc) * SqrPixScale;
+		mask DirectSamplingMask2 = cmp && Magnitude * SqrJuliaPixelSize * vreal(16.0) < std::norm(derivatives::dzdc) *SqrPixScale;
 		MixedSamplingMask = AndNot(DirectSamplingMask, MixedSamplingMask || cmp);
 
 		SamplingIteration = Select(cmp, Iteration, SamplingIteration);
@@ -1179,7 +1179,7 @@ void HInfLAEvaluator::EvaluationContext<real, EvaluateDzdc, EvaluateDzdz>::Evalu
 
 		j++;
 		z = dz + vcomplex(Ref.Ref[j]);
-		vreal Magnitude = norm(z);
+		vreal Magnitude = std::norm(z);
 		TrySampleJulia(ActiveMask);
 		mask CompareResult = (Magnitude > vreal(4096.0) || (Iteration >= ivec(MaxIt))) && ActiveMask;
 		if (CompareResult) {
@@ -1192,7 +1192,7 @@ void HInfLAEvaluator::EvaluationContext<real, EvaluateDzdc, EvaluateDzdz>::Evalu
 		if (j == Ref.RefIt) {
 			VecResetAndSync();
 		} else {
-			VecResetIf(norm(dz) * real(64) > Magnitude);
+			VecResetIf(std::norm(dz) * real(64) > Magnitude);
 		}
 	}
 	z = InactiveZ;
@@ -1218,7 +1218,7 @@ void HInfLAEvaluator::EvaluationContext<real, EvaluateDzdc, EvaluateDzdz>::Evalu
 
 		Iteration -= ivec(ActiveMask.ymm);
 
-		vreal Magnitude = norm(z);
+		vreal Magnitude = std::norm(z);
 
 		mask CompareResult = (Magnitude > vreal(4096.0) || (Iteration >= ivec(MaxIt))) && ActiveMask;
 		if (CompareResult) {
@@ -1254,7 +1254,7 @@ void HInfLAEvaluator::EvaluationContext<real, EvaluateDzdc, EvaluateDzdz>::Evalu
 		ActiveMask = CompareResult && ActiveMask;
 		if (!ActiveMask) break;
 
-		vreal Magnitude = norm(z);
+		vreal Magnitude = std::norm(z);
 
 		CompareResult = (Magnitude > vreal(SqrEscapeRadius)) && ActiveMask;
 		if (CompareResult) {
@@ -1423,11 +1423,11 @@ void HInfLAEvaluator::HInfLAEvaluationTask::Evaluate(GroupedRasterizingInterface
 
 	end:
 		vreal FinalMagDzdc = vreal(-1.0);
-		vreal FinalMagnitude = norm(HRContext.z);
+		vreal FinalMagnitude = std::norm(HRContext.z);
 		i64vec4 Iteration = HRContext.Iteration;
 
 		if constexpr (EvaluateDzdc) {
-			FinalMagDzdc = sqrt(norm(HRContext.dzdc));
+			FinalMagDzdc = sqrt(std::norm(HRContext.dzdc));
 		}
 		VSRReal<VSize> VSamplingLogInvDE;
 		VSRReal<VSize> VSamplingIteration;
@@ -1437,7 +1437,7 @@ void HInfLAEvaluator::HInfLAEvaluationTask::Evaluate(GroupedRasterizingInterface
 			SRReal SamplingLogInvDE[4];
 			SRReal SamplingAcceptance[4];
 
-			VHRReal<VSize> MagSamplinDzdc = sqrt(norm(HRContext.SamplingDzdc));
+			VHRReal<VSize> MagSamplinDzdc = sqrt(std::norm(HRContext.SamplingDzdc));
 			for (size_t i = 0; i < VectorSize; i++) {
 				if (HRContext.SamplingMask[i]) {
 					HRComplex z = HRComplex(HRContext.SamplingZ.real()[i], HRContext.SamplingZ.imag()[i]);
@@ -1461,7 +1461,7 @@ void HInfLAEvaluator::HInfLAEvaluationTask::Evaluate(GroupedRasterizingInterface
 			dvec4 LogMagnitude = log(FinalMagnitude);
 			vreal InvDE = (FinalMagDzdc + FinalMagDzdc) / (FinalMagnitude * vreal(LogMagnitude));
 
-			VSRReal<VSize> LogVal = log(norm(HRContext.SamplingDzdc) / norm(HRContext.SamplingZ)) * 0.5;
+			VSRReal<VSize> LogVal = log(std::norm(HRContext.SamplingDzdc) / std::norm(HRContext.SamplingZ)) * 0.5;
 
 			dvec4 LogInvDE = log(InvDE);
 			LogVal += VSamplingLogInvDE;
@@ -1588,7 +1588,7 @@ void HInfLAEvaluator::HInfLAEvaluationTask::JuliaRenderingContext::RenderJulia(c
 
 					Iteration = EvaluateJulia(parameters, reference, z0, InvDE);
 
-					VHRReal<VSize> MagnitudeZ = sqrt(norm(z0));
+					VHRReal<VSize> MagnitudeZ = sqrt(std::norm(z0));
 					InvDE *= MagnitudeZ;
 
 					if (PixelGroupSize == 1) {
@@ -1786,10 +1786,10 @@ SREvaluation:
 
 end:
 	VHRReal<VSize> FinalMagDzdz = VHRReal<VSize>(-1.0);
-	VHRReal<VSize> FinalMagnitude = norm(HRContext.z);
+	VHRReal<VSize> FinalMagnitude = std::norm(HRContext.z);
 	i64vec4 Iteration = HRContext.Iteration;
 
-	FinalMagDzdz = norm(HRContext.dzdz);
+	FinalMagDzdz = std::norm(HRContext.dzdz);
 
 	VSRReal<VSize> IterDouble = Iteration.ToDouble();
 	IterDouble = Select(FinalMagnitude != VSRReal<VSize>(-1.0), IterDouble + VSRReal<VSize>(log2(log2(4096.0))) - log2(log2(FinalMagnitude)), IterDouble);
