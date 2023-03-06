@@ -240,3 +240,8 @@ inline DExpVec4 copysign(const DExpVec4 &mag, const DExpVec4 &sgn)
 	result.Mantissa = copysign(mag.Mantissa, sgn.Mantissa);
 	return result;
 }
+inline DExpVec4 &operator+=(DExpVec4 &x, const DExpVec4 &y)
+{
+  x = x + y;
+  return x;
+}
