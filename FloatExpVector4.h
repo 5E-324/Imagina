@@ -10,6 +10,9 @@ struct DExpVec;
 
 template <> struct Vector4Selector<FExpDouble> { using type = DExpVec4; };
 
+inline DExpVec4 operator+(DExpVec4 x, const DExpVec4 &y);
+inline DExpVec4 operator-(DExpVec4 x, const DExpVec4 &y);
+
 struct DExpVec4 {
 	union {
 		struct {
@@ -110,7 +113,7 @@ struct DExpVec4 {
 
 	inline FExpDouble operator[](const size_t &i) { return FExpDouble(Mantissa[i], Exponent[i]); }
 
-	inline DExpVec4 operator+(const DExpVec4 &x) const noexcept {
+	inline DExpVec4 operator+=(const DExpVec4 &x) noexcept {
 		mask64x4 Mask = _mm256_cmpgt_epi64(Exponent, x.Exponent);
 		i64vec4 Exponent1 = Select(Mask, Exponent, x.Exponent);
 		i64vec4 Exponent2 = Select(Mask, x.Exponent, Exponent);
@@ -124,11 +127,16 @@ struct DExpVec4 {
 		Mantissa2 = _mm256_and_pd(Mantissa2, Mask);
 		Mantissa1 = _mm256_add_pd(Mantissa1, Mantissa2);
 
-		return DExpVec4(Mantissa1, Exponent1).Normalized();
+		Mantissa = Mantissa1;
+		Exponent = Exponent1;
+
+		Normalize();
+
+		return *this;
 	}
 
-	inline DExpVec4 operator-(const DExpVec4 &x) const noexcept {
-		return operator+(DExpVec4(_mm256_xor_pd(x.Mantissa, _mm256_set1_pd(SignMask)), x.Exponent));
+	inline DExpVec4 operator-=(const DExpVec4 &x) noexcept {
+		return operator+=(DExpVec4(_mm256_xor_pd(x.Mantissa, _mm256_set1_pd(SignMask)), x.Exponent));
 	}
 
 	inline DExpVec4 operator*(const DExpVec4 &x) const noexcept {
@@ -182,6 +190,14 @@ struct DExpVec4 {
 		return Select(a.AssumeNormalizedPositive > b, a, b);
 	}
 };
+
+inline DExpVec4 operator+(DExpVec4 x, const DExpVec4 &y) noexcept {
+	return x += y;
+}
+
+inline DExpVec4 operator-(DExpVec4 x, const DExpVec4 &y) noexcept {
+	return x -= y;
+}
 
 inline DExpVec4 Select(mask64x4 sel, DExpVec4 t, DExpVec4 f) {
 	return DExpVec4(Select(sel, t.Mantissa, f.Mantissa), Select(sel, t.Exponent, f.Exponent));
