@@ -321,6 +321,7 @@ inline dvec4 ArrayToVec4(double *x) {
 	return dvec4(x);
 }
 
+dvec4 abs(const dvec4 &x) { return x.abs(); }
 mask64x4 isinf(const dvec4 &x) { return dvec4(1) / x == dvec4(0); }
 mask64x4 isnan(const dvec4 &x) { return ! (x == x); }
 dvec4 copysign(const dvec4 &mag, const dvec4 &sgn)
