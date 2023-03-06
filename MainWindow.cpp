@@ -65,12 +65,12 @@ bool InitPixelFormat(HDC hDC) {
 	pixelformat = ChoosePixelFormat(hDC, ppfd);
 
 	if (pixelformat == 0) {
-		MessageBox(nullptr, L"ChoosePixelFormat failed", L"Error", MB_OK);
+		MessageBoxW(nullptr, L"ChoosePixelFormat failed", L"Error", MB_OK);
 		return false;
 	}
 
 	if (SetPixelFormat(hDC, pixelformat, ppfd) == FALSE) {
-		MessageBox(nullptr, L"SetPixelFormat failed", L"Error", MB_OK);
+		MessageBoxW(nullptr, L"SetPixelFormat failed", L"Error", MB_OK);
 		return false;
 	}
 
@@ -152,7 +152,7 @@ void CreateMainWindow() {
 	WindowClass.hCursor = LoadCursor(nullptr, IDC_ARROW);
 	WindowClass.hbrBackground = nullptr;
 	WindowClass.lpszMenuName = nullptr;
-	WindowClass.lpszClassName = L"ImaginaMainWindow";
+	WindowClass.lpszClassName = "ImaginaMainWindow";
 	WindowClass.hIconSm = nullptr;
 
 	RegisterClassEx(&WindowClass);
@@ -180,7 +180,7 @@ void CreateMainWindow() {
 		InitialWindowWidth = (InitialWindowHeight - BorderHeight) * 2 + BorderWidth;
 	}
 
-	HWnd = CreateWindowEx(
+	HWnd = CreateWindowExW(
 		NULL,
 		L"ImaginaMainWindow",
 		L"Imagina",
@@ -1191,7 +1191,7 @@ LRESULT CALLBACK WindowProcess(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lP
 				}
 				case (UINT_PTR)MenuID::Tasks: {
 					if (!TasksDialog) {
-						TasksDialog = CreateDialogW(nullptr, MAKEINTRESOURCE(IDD_TASKS), HWnd, TasksProc);
+						TasksDialog = CreateDialogA(nullptr, MAKEINTRESOURCE(IDD_TASKS), HWnd, TasksProc);
 					}
 					ShowWindow(TasksDialog, SW_SHOW);
 					break;
