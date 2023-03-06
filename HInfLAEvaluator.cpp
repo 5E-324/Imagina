@@ -5,6 +5,10 @@
 #include <math.h>
 #include <random>
 
+#ifndef M_E
+#define M_E 2.71828182845905
+#endif
+
 HInfLAEvaluator::JuliaPixel HInfLAEvaluator::JuliaMipmaps::Sample(HRComplex z, HRReal PixelSize) {
 	SRComplex SamplePosition = log(z);
 
