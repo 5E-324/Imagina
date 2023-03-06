@@ -365,3 +365,7 @@ FodyWeavers.xsd
 [Ii]nclude/
 [Ll]ib/
 CMakeSettings.json
+
+
+*.d
+*.o
