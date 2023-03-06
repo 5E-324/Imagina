@@ -10,8 +10,8 @@ struct DExpVec;
 
 template <> struct Vector4Selector<FExpDouble> { using type = DExpVec4; };
 
-inline DExpVec4 operator+(DExpVec4 x, const DExpVec4 &y);
-inline DExpVec4 operator-(DExpVec4 x, const DExpVec4 &y);
+inline DExpVec4 operator+(DExpVec4 x, const DExpVec4 &y) noexcept;
+inline DExpVec4 operator-(DExpVec4 x, const DExpVec4 &y) noexcept;
 
 struct DExpVec4 {
 	union {
