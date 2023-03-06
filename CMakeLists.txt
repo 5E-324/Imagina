@@ -30,7 +30,7 @@ else()
 endif()
 
 target_link_libraries(Imagina "opengl32")
-target_link_libraries(Imagina "mpirdll")
+target_link_libraries(Imagina "mpir")
 target_link_libraries(Imagina "comctl32")
 target_link_libraries(Imagina "libpng16")
 target_link_libraries(Imagina "zlibwapi")
