@@ -367,5 +367,7 @@ FodyWeavers.xsd
 CMakeSettings.json
 
 
+*.exe
 *.d
 *.o
+*.res
