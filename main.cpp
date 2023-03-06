@@ -8,7 +8,7 @@
 
 void OpenFile(wchar_t *FileName, size_t ExtensionOffset = 0);
 
-int WINAPI wWinMain(HINSTANCE /*hInstance*/, HINSTANCE /*hPrevInstance*/, LPWSTR /*lpCmdLine*/, int /*nCmdShow*/) {
+int WINAPI WinMain(HINSTANCE /*hInstance*/, HINSTANCE /*hPrevInstance*/, LPSTR /*lpCmdLine*/, int /*nCmdShow*/) {
 	CreateMainWindow();
 	InitRenderResources();
 	Computation::Init();
