@@ -1437,11 +1437,11 @@ void HInfLAEvaluator::HInfLAEvaluationTask::Evaluate(GroupedRasterizingInterface
 			SRReal SamplingLogInvDE[4];
 			SRReal SamplingAcceptance[4];
 
-			VHRReal<VSize> MagSamplinDzdc = sqrt(std::norm(HRContext.SamplingDzdc));
+			VHRReal<VSize> MagSamplingDzdc = sqrt(std::norm(HRContext.SamplingDzdc));
 			for (size_t i = 0; i < VectorSize; i++) {
 				if (HRContext.SamplingMask[i]) {
 					HRComplex z = HRComplex(HRContext.SamplingZ.real()[i], HRContext.SamplingZ.imag()[i]);
-					HRReal MagDzdc = HRReal(MagSamplinDzdc.Mantissa[i], MagSamplinDzdc.Exponent[i]);
+					HRReal MagDzdc = HRReal(MagSamplingDzdc.Mantissa[i], MagSamplingDzdc.Exponent[i]);
 					JuliaPixel Pixel = Ref.Julia.Sample(z, MagDzdc * PixScale);
 
 					SamplingLogInvDE[i] = Pixel.LogInvDE;
