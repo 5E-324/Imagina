@@ -5,7 +5,7 @@ OPENGL= $(HOME)/win/src/OpenGL-Registry
 CPPFLAGS = -I$(prefix)/include -I$(MPIR) -I$(OPENGL)/api/GL
 LDFLAGS = -L$(prefix)/lib -static
 
-CXXFLAGS = -std=c++20 -mavx -mavx2 -MMD
+CXXFLAGS = -MMD -std=c++20 -mavx2 -mfma -fno-math-errno -flto -O3
 
 LIBS = -lmpir -lmpirxx -lpng -lz -lcomctl32 -lcomdlg32 -lgdi32 -lopengl32
 
