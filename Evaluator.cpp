@@ -310,7 +310,7 @@ Reference *NovaEvaluator::_GenerateReference(const Coordinate &coordinate) {
 	complexh C = { coordinate.X, coordinate.Y };
 	complexh Z = { 1.0, 0.0 };
 	complex z = { 1.0, 0.0 };
-	Ref.Refc = std::complex<HRReal>(C);
+	Ref.Refc = { convert<real2>(C.real()), convert<real2>(C.imag()) };
 
 	size_t i = 0;
 	Ref.Zr.Append(z.real());
@@ -319,12 +319,14 @@ Reference *NovaEvaluator::_GenerateReference(const Coordinate &coordinate) {
 	Ref.Zm1.Append(z - real2(1.0));
 
 	complexh ZSQR = Z * Z;
+	complexh Zpow3m1;
 	for (; i <= MaxIt; i++) {
 		Z = Z - div((Z * ZSQR - 1_hp), (3_hp * ZSQR)) + C;
 		ZSQR = Z * Z;
-		z = std::complex<HRReal>(Z);
+		z = { convert<real2>(Z.real()), convert<real2>(Z.imag()) };
 		complex zpow3m1;
-		zpow3m1 = std::complex<HRReal>(ZSQR * Z - 1_hp);
+		Zpow3m1 = ZSQR * Z - 1_hp;
+		zpow3m1 = { convert<real2>(Zpow3m1.real()), convert<real2>(Zpow3m1.imag()) };
 		real2 zrm1 = real2(HRReal(Z.real() - 1));
 		complex zm1 = complex(zrm1, z.imag());
 
