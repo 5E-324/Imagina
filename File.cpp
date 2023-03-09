@@ -542,3 +542,19 @@ void SaveImage(wchar_t *FileName) {
 
 	png_destroy_write_struct(&png, &info);
 }
+
+void SaveRawPixelData(wchar_t *FileName) {
+	std::ofstream File(FileName, std::ofstream::out | std::ofstream::binary);
+
+	int32_t width = FContext.pixelManager.Width, height = FContext.pixelManager.Height;
+
+	size_t X = FContext.pixelManager.Passes[FContext.pixelManager.PassCount - 1].X;
+	size_t Y = FContext.pixelManager.Passes[FContext.pixelManager.PassCount - 1].Y;
+	size_t TextureWidth = FContext.pixelManager.TextureWidth;
+
+	for (size_t y = Y; y < Y + height; y++) {
+		File.write((const char *)&FContext.pixelManager.Data[y * TextureWidth + X], width * sizeof(float));
+	}
+
+	File.close();
+}

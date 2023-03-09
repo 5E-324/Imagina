@@ -11,3 +11,4 @@ enum class FileType {
 void OpenFile(wchar_t *FileName, size_t ExtensionOffset);
 void SaveFile(wchar_t *FileName, FileType Type);
 void SaveImage(wchar_t *FileName);
+void SaveRawPixelData(wchar_t *FileName);

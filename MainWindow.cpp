@@ -95,6 +95,7 @@ void CreateMainWindow() {
 	AppendMenuW(File, MF_STRING, (UINT_PTR)MenuID::Open, L"Open\tCtrl+O");
 	AppendMenuW(File, MF_STRING, (UINT_PTR)MenuID::Save, L"Save\tCtrl+S");
 	AppendMenuW(File, MF_STRING, (UINT_PTR)MenuID::SaveImage, L"Save image\tCtrl+Shift+S");
+	AppendMenuW(File, MF_STRING, (UINT_PTR)MenuID::SaveRawPixelData, L"Save raw pixel data");
 
 	AppendMenuW(Fractal, MF_POPUP, (UINT_PTR)FractalType, L"Formula");
 	AppendMenuW(Fractal, MF_STRING | MF_CHECKED, (UINT_PTR)MenuID::DistanceEstimation, L"Distance estimation");
@@ -314,7 +315,7 @@ void SaveLocation() {
 	}
 	SaveFile(FileName, Type);
 }
-void SaveImage() {
+void SaveImage(bool raw = false) {
 	if (!FContext.pixelManager.Completed()) {
 		MessageBoxA(nullptr, "Please wait for computations to finish.", "Save image", MB_OK | MB_ICONASTERISK | MB_TASKMODAL);
 		return;
@@ -326,7 +327,7 @@ void SaveImage() {
 	OpenFileName.lStructSize = sizeof(OPENFILENAMEW);
 	OpenFileName.hwndOwner = HWnd;
 	OpenFileName.hInstance = nullptr;
-	OpenFileName.lpstrFilter = L"PNG(*.png)\0*.png\0All Files(*.*)\0*.*\0";
+	OpenFileName.lpstrFilter = raw ? L"All Files(*.*)\0*.*\0" : L"PNG(*.png)\0*.png\0All Files(*.*)\0*.*\0";
 	OpenFileName.lpstrCustomFilter = nullptr;
 	OpenFileName.nMaxCustFilter = 0;
 	OpenFileName.nFilterIndex = 1;
@@ -337,11 +338,15 @@ void SaveImage() {
 	OpenFileName.lpstrInitialDir = nullptr;
 	OpenFileName.lpstrTitle = nullptr;
 	OpenFileName.Flags = OFN_EXPLORER | OFN_OVERWRITEPROMPT;
-	OpenFileName.lpstrDefExt = L"png";
+	OpenFileName.lpstrDefExt = raw ? L"" : L"png";
 
 	if (!GetSaveFileNameW(&OpenFileName)) return;
 
-	SaveImage(FileName);
+	if (raw) {
+		SaveRawPixelData(FileName);
+	} else {
+		SaveImage(FileName);
+	}
 }
 
 INT_PTR SetFormulaProc(HWND hWndDlg, UINT message, WPARAM wParam, LPARAM /*lParam*/) {
@@ -1103,6 +1108,10 @@ LRESULT CALLBACK WindowProcess(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lP
 				}
 				case (UINT_PTR)MenuID::SaveImage: {
 					SaveImage();
+					break;
+				}
+				case (UINT_PTR)MenuID::SaveRawPixelData: {
+					SaveImage(true);
 					break;
 				}
 				case (UINT_PTR)MenuID::FractalTypeMandelbrot: {
