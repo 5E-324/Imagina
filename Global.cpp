@@ -10,6 +10,7 @@ namespace Global {
 	uint64_t MaxIt = 1024;
 	bool UseBilinearFilter = false;
 	bool FlipVertically = false;
+	bool PreModulo = false;
 	bool SizeChanged = false;
 	bool Redraw = true;
 	bool Initialized = false;

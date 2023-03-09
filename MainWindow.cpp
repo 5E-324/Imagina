@@ -118,6 +118,7 @@ void CreateMainWindow() {
 	AppendMenuW(View, MF_STRING, (UINT_PTR)MenuID::ImageSize, L"Image size");
 	AppendMenuW(View, MF_STRING, (UINT_PTR)MenuID::BilinearFilter, L"Bilinear filter");
 	AppendMenuW(View, MF_STRING, (UINT_PTR)MenuID::FlipVertically, L"Flip imaginary axis");
+	AppendMenuW(View, MF_STRING, (UINT_PTR)MenuID::PreModulo, L"Pre-modulo (workaround for precision loss)");
 
 	AppendMenuW(FractalType, MF_STRING, (UINT_PTR)MenuID::FractalTypeMandelbrot, L"Mandelbrot");
 	AppendMenuW(FractalType, MF_STRING, (UINT_PTR)MenuID::FractalTypeTricorn, L"Tricorn");
@@ -1228,6 +1229,12 @@ LRESULT CALLBACK WindowProcess(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lP
 					Global::FlipVertically = !Global::FlipVertically;
 					CheckMenuItem(View, (UINT_PTR)MenuID::FlipVertically, MF_BYCOMMAND | (Global::FlipVertically ? MF_CHECKED : MF_UNCHECKED));
 					Global::Redraw = true;
+					break;
+				}
+				case (UINT_PTR)MenuID::PreModulo: {
+					Global::PreModulo = !Global::PreModulo;
+					CheckMenuItem(View, (UINT_PTR)MenuID::PreModulo, MF_BYCOMMAND | (Global::PreModulo ? MF_CHECKED : MF_UNCHECKED));
+					FContext.InvalidatePixel();
 					break;
 				}
 			}

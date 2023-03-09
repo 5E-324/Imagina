@@ -34,6 +34,7 @@ enum class MenuID : UINT_PTR {
 	PaletteMipmaps,
 	BilinearFilter,
 	FlipVertically,
+	PreModulo,
 
 	FractalTypeBegin,
 	FractalTypeMandelbrot = FractalTypeBegin,

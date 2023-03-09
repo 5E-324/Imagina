@@ -17,6 +17,7 @@ namespace Global {
 	extern uint64_t MaxIt;
 	extern bool UseBilinearFilter;
 	extern bool FlipVertically;
+	extern bool PreModulo;
 	extern bool SizeChanged;
 	extern bool Redraw;
 	extern bool Initialized;
