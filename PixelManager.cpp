@@ -539,6 +539,7 @@ void StandardPixelManager::SetLocation(RelLocation &Location) {
 	NewOrigin.X = Location.X + NewOriginOffsetX;
 	NewOrigin.Y = Location.Y + NewOriginOffsetY;
 
+	goto ReuseFailed;
 	if (Location.HalfH == 0.5 * CurrentLocation.HalfH && PixelValid) {
 		int32_t DiffX = round(SRReal((Origin.X - NewOrigin.X) / PixelSize));
 		int32_t DiffY = round(SRReal((Origin.Y - NewOrigin.Y) / PixelSize));

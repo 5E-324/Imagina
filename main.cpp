@@ -73,7 +73,11 @@ int WINAPI wWinMain(HINSTANCE /*hInstance*/, HINSTANCE /*hPrevInstance*/, LPWSTR
 		POINT MousePoint{ MouseX, MouseY };
 		SRReal X = (SRReal((int)MousePoint.x) - WindowWidth * 0.5) / WindowHeight * 2.0;
 		SRReal Y = -(SRReal((int)MousePoint.y) / WindowHeight * 2.0 - 1.0);
-		FContext.FindFeature(X, Y);
+
+		SRReal FractalX = Global::InvTransformMatrix[0][0] * X + Global::InvTransformMatrix[1][0] * Y;
+		SRReal FractalY = Global::InvTransformMatrix[0][1] * X + Global::InvTransformMatrix[1][1] * Y;
+
+		FContext.FindFeature(FractalX, FractalY);
 		if (FContext.Feature) {
 			HRReal FeatureX, FeatureY;
 			FContext.Feature->GetCoordinate(FeatureX, FeatureY);
@@ -81,7 +85,10 @@ int WINAPI wWinMain(HINSTANCE /*hInstance*/, HINSTANCE /*hPrevInstance*/, LPWSTR
 			FeatureX = (FeatureX - FContext.RenderLocation.X) / FContext.RenderLocation.HalfH; // To screen coordinate
 			FeatureY = (FeatureY - FContext.RenderLocation.Y) / FContext.RenderLocation.HalfH;
 
-			RenderLineToFeature(X, Y, (double)FeatureX, (double)FeatureY);
+			HRReal FeatureScreenX = Global::TransformMatrix[0][0] * FeatureX + Global::TransformMatrix[1][0] * FeatureY;
+			HRReal FeatureScreenY = Global::TransformMatrix[0][1] * FeatureX + Global::TransformMatrix[1][1] * FeatureY;
+
+			RenderLineToFeature(X, Y, (double)FeatureScreenX, (double)FeatureScreenY);
 		}
 
 		Global::Redraw = false;

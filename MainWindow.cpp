@@ -1101,11 +1101,14 @@ LRESULT CALLBACK WindowProcess(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lP
 		case WM_MOUSEMOVE: {
 			if (!(wParam & MK_LBUTTON)) Panning = false;
 			if (Panning) {
-				double MovementX = (int32_t)LOWORD(lParam) - MouseX;
-				double MovementY = (int32_t)HIWORD(lParam) - MouseY;
+				double MovementX = -double((int32_t)LOWORD(lParam) - MouseX) / WindowHeight * 2.0;
+				double MovementY = double((int32_t)HIWORD(lParam) - MouseY) / WindowHeight * 2.0;
+
+				double FractalMovementX = Global::InvTransformMatrix[0][0] * MovementX + Global::InvTransformMatrix[1][0] * MovementY;
+				double FractalMovementY = Global::InvTransformMatrix[0][1] * MovementX + Global::InvTransformMatrix[1][1] * MovementY;
 
 				Global::moved = true;
-				FContext.Move(-MovementX / WindowHeight * 2.0, (Global::FlipVertically ? -MovementY : MovementY) / WindowHeight * 2.0);
+				FContext.Move(FractalMovementX, FractalMovementY);
 			}
 			MouseX = (int32_t)LOWORD(lParam);
 			MouseY = (int32_t)HIWORD(lParam);
@@ -1117,14 +1120,16 @@ LRESULT CALLBACK WindowProcess(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lP
 			ScreenToClient(hWnd, &MousePoint);
 			SRReal X = (SRReal((int)MousePoint.x) - WindowWidth * 0.5) / WindowHeight * 2.0;
 			SRReal Y = -(SRReal((int)MousePoint.y) / WindowHeight * 2.0 - 1.0);
-			if (Global::FlipVertically) Y = -Y;
+
+			SRReal FractalX = Global::InvTransformMatrix[0][0] * X + Global::InvTransformMatrix[1][0] * Y;
+			SRReal FractalY = Global::InvTransformMatrix[0][1] * X + Global::InvTransformMatrix[1][1] * Y;
 
 			int delta = GET_WHEEL_DELTA_WPARAM(wParam);
 
 			if (delta > 0) {
-				FContext.ZoomIn(X, Y);
+				FContext.ZoomIn(FractalX, FractalY);
 			} else if (delta < 0) {
-				FContext.ZoomOut(X, Y);
+				FContext.ZoomOut(FractalX, FractalY);
 			}
 
 			break;
