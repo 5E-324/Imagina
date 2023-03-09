@@ -584,12 +584,59 @@ INT_PTR SetIterationLimitProc(HWND hWndDlg, UINT message, WPARAM wParam, LPARAM 
 INT_PTR TransformProc(HWND hWndDlg, UINT message, WPARAM wParam, LPARAM /*lParam*/) {
 	switch (message) {
 		case WM_INITDIALOG: {
+			char buffer[32];
+			
+			SendMessage(GetDlgItem(hWndDlg, IDC_FLIP_IMAGINARY), BM_SETCHECK, (WPARAM)(Global::FlipVertically ? BST_CHECKED : BST_UNCHECKED), (LPARAM)0);
+
+			sprintf_s(buffer, "%g", Global::Rotation);
+			SetDlgItemTextA(hWndDlg, IDC_ROTATION, buffer);
+
+			sprintf_s(buffer, "%g", Global::StretchAngle);
+			SetDlgItemTextA(hWndDlg, IDC_STRETCH_ANGLE, buffer);
+
+			sprintf_s(buffer, "%g", Global::StretchRatio);
+			SetDlgItemTextA(hWndDlg, IDC_STRETCH_RATIO, buffer);
+
 			break;
 		}
 		case WM_COMMAND: {
 			switch (LOWORD(wParam)) {
 				case IDOK: {
+					char buffer[32];
+					buffer[32] = 0;
+					SRReal newRotateAngle, newStretchAngle, newStretchAmount;
+					try {
+						GetDlgItemTextA(hWndDlg, IDC_ROTATION, buffer, 31);
+						newRotateAngle = std::stof(buffer);
 
+						GetDlgItemTextA(hWndDlg, IDC_STRETCH_ANGLE, buffer, 31);
+						newStretchAngle = std::stof(buffer);
+
+						GetDlgItemTextA(hWndDlg, IDC_STRETCH_RATIO, buffer, 31);
+						newStretchAmount = std::stof(buffer);
+					} catch (std::invalid_argument) {
+						MessageBoxA(hWndDlg, "Value invalid.", nullptr, MB_OK | MB_ICONERROR);
+						break;
+					} catch (std::out_of_range) {
+						MessageBoxA(hWndDlg, "Value out of range.", nullptr, MB_OK | MB_ICONERROR);
+						break;
+					}
+
+					Global::FlipVertically = SendMessage(GetDlgItem(hWndDlg, IDC_FLIP_IMAGINARY), BM_GETCHECK, (WPARAM)0, (LPARAM)0) == BST_CHECKED;
+
+					Global::Rotation = newRotateAngle;
+					Global::StretchAngle = newStretchAngle;
+					Global::StretchRatio = newStretchAmount;
+
+					SRReal sinRotation = sin(Global::Rotation);
+					SRReal cosRotation = cos(Global::Rotation);
+
+					Global::TransformMatrix = glm::dmat2(cosRotation, sinRotation, -sinRotation, cosRotation);
+					Global::TransformMatrix *= glm::dmat2(1.0, 0.0, 0.0, Global::FlipVertically ? -1.0 : 1.0);
+
+					Global::InvTransformMatrix = glm::inverse(Global::TransformMatrix);
+
+					FContext.InvalidatePixel();
 				}
 				[[fallthrough]];
 				case IDCANCEL: {
