@@ -1003,6 +1003,11 @@ start:
 }
 void StandardRI::WriteResults(SRReal Value) {
 	TryCopyData();
+
+	if (Global::PreModulo && Value < Global::MaxIt) {
+		Value = fmod(Value, Global::ItMod);
+	}
+
 	StandardPixelManager::PassInfo &CurrentPass = R.Passes[Pass], &PreviousPass = R.Passes[Pass - 1];
 
 	size_t Index = int64_t(R.TextureWidth) * int64_t(Coord.Y + CurrentPass.Y) + int64_t(Coord.X + CurrentPass.X);
@@ -1151,6 +1156,10 @@ void StandardGRI::WriteResults(SRReal *Values) {
 
 	size_t Index[4];
 	for (size_t i = 0; i < 4; i++) {
+		if (Global::PreModulo && Values[i] < Global::MaxIt) {
+			Values[i] = fmod(Values[i], Global::ItMod);
+		}
+
 		Index[i] = int64_t(R.TextureWidth) * int64_t(Coord[i].Y + CurrentPass.Y) + int64_t(Coord[i].X + CurrentPass.X);
 	}
 

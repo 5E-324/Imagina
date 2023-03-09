@@ -410,8 +410,9 @@ void FractalContext::Update() {
 
 		if (Global::ItLim != OldMaxIt) {
 			if (Global::ItLim > OldMaxIt) pixelManager.ChangeMaxit(OldMaxIt);
-			else if (CurrentFractalType == FractalTypeEnum::Mandelbrot && UsingDE && UsingLA) pixelManager.Clear();
-			else if (CurrentFractalType == FractalTypeEnum::Nova && UsingDE) pixelManager.Clear();
+			else if ((CurrentFractalType == FractalTypeEnum::Mandelbrot && UsingDE && UsingLA)
+				|| (CurrentFractalType == FractalTypeEnum::Nova && UsingDE)
+				|| Global::PreModulo) pixelManager.Clear();
 			//pixelManager.Clear();
 			OldMaxIt = Global::ItLim;
 		}

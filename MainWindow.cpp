@@ -1149,10 +1149,18 @@ LRESULT CALLBACK WindowProcess(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lP
 				}
 				case (UINT_PTR)MenuID::IncreaseColorDensity: {
 					Global::ItDiv = std::max(8.0_sr, Global::ItDiv / 2);
+					if (Global::PreModulo && Global::ItDiv * Global::MaxPreModMultiplier < Global::ItMod) {
+						Global::ItMod = Global::ItDiv * Global::DefaultPreModMultiplier;
+						FContext.InvalidatePixel();
+					}
 					break;
 				}
 				case (UINT_PTR)MenuID::DecreaseColorDensity: {
 					Global::ItDiv = std::min(0x1p48_sr, Global::ItDiv * 2);
+					if (Global::PreModulo && Global::ItDiv > Global::ItMod) {
+						Global::ItMod = Global::ItDiv * Global::DefaultPreModMultiplier;
+						FContext.InvalidatePixel();
+					}
 					break;
 				}
 				case (UINT_PTR)MenuID::IncreaseIterationLimit: {

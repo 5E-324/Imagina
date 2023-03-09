@@ -6,6 +6,7 @@ FractalContext FContext;
 
 namespace Global {
 	SRReal ItDiv = 256.0;
+	SRReal ItMod = 256.0 * DefaultPreModMultiplier;
 	size_t ItLim = 1024;
 	uint64_t MaxIt = 1024;
 	bool UseBilinearFilter = false;

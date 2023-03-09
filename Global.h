@@ -12,7 +12,11 @@ extern size_t InitialWindowWidth;
 extern size_t InitialWindowHeight;
 
 namespace Global {
+	constexpr SRReal MaxPreModMultiplier = 4096.0_sr;
+	constexpr SRReal DefaultPreModMultiplier = 64.0_sr;
+
 	extern SRReal ItDiv;
+	extern SRReal ItMod;
 	extern size_t ItLim;
 	extern uint64_t MaxIt;
 	extern bool UseBilinearFilter;
