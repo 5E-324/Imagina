@@ -15,6 +15,7 @@ namespace Global {
 	bool SizeChanged = false;
 	bool Redraw = true;
 	bool Initialized = false;
+	bool Transform = false;
 
 	std::vector<RGBA> Palette = {
 		{ 0.0,  0.0,  0.75, 1.0 },
@@ -28,6 +29,12 @@ namespace Global {
 
 	SRReal ColoringValueOffset = 0.0;
 	SRReal ColorCyclingSpeed = 0.0;
+
+	SRReal Rotation = 0.0;
+	SRReal StretchAngle = 0.0;
+	SRReal StretchRatio = 0.0;
+	glm::dmat2 TransformMatrix;
+	glm::dmat2 InvTransformMatrix;
 
 	std::string CustomFormula = "z^2 + c";
 

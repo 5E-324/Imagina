@@ -46,6 +46,7 @@
 #include <stdint.h>
 #include <chrono>
 #include <iostream>
+#include <glm/glm.hpp>
 
 #include "PlatformDependent.h"
 #include "Types.h"

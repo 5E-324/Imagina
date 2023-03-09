@@ -103,6 +103,7 @@ void CreateMainWindow() {
 
 	AppendMenuW(Fractal, MF_STRING, (UINT_PTR)MenuID::Location, L"Location");
 	AppendMenuW(Fractal, MF_STRING, (UINT_PTR)MenuID::IterationLimit, L"Iteration limit");
+	AppendMenuW(Fractal, MF_STRING, (UINT_PTR)MenuID::Transformation, L"Transformation");
 
 	AppendMenuW(Fractal, MF_STRING, (UINT_PTR)MenuID::IncreaseColorDensity, L"Increase color density\tA");
 	AppendMenuW(Fractal, MF_STRING, (UINT_PTR)MenuID::DecreaseColorDensity, L"Decrease color density\tS");
@@ -567,6 +568,28 @@ INT_PTR SetIterationLimitProc(HWND hWndDlg, UINT message, WPARAM wParam, LPARAM 
 						}
 					}
 					delete[]Buffer;
+				}
+				[[fallthrough]];
+				case IDCANCEL: {
+					EndDialog(hWndDlg, wParam);
+					return TRUE;
+				}
+			}
+			break;
+		}
+	}
+
+	return 0;
+}
+INT_PTR TransformProc(HWND hWndDlg, UINT message, WPARAM wParam, LPARAM /*lParam*/) {
+	switch (message) {
+		case WM_INITDIALOG: {
+			break;
+		}
+		case WM_COMMAND: {
+			switch (LOWORD(wParam)) {
+				case IDOK: {
+
 				}
 				[[fallthrough]];
 				case IDCANCEL: {
@@ -1154,6 +1177,10 @@ LRESULT CALLBACK WindowProcess(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lP
 				}
 				case (UINT_PTR)MenuID::IterationLimit: {
 					DialogBox(nullptr, MAKEINTRESOURCE(IDD_ITERATION_LIMIT), HWnd, SetIterationLimitProc);
+					break;
+				}
+				case (UINT_PTR)MenuID::Transformation: {
+					DialogBox(nullptr, MAKEINTRESOURCE(IDD_TRANSFORMATION), HWnd, TransformProc);
 					break;
 				}
 				case (UINT_PTR)MenuID::IncreaseColorDensity: {

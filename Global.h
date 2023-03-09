@@ -25,12 +25,19 @@ namespace Global {
 	extern bool SizeChanged;
 	extern bool Redraw;
 	extern bool Initialized;
+	extern bool Transform;
 
 	extern std::vector<RGBA> Palette;
 	extern bool GammaCorrection;
 
 	extern SRReal ColoringValueOffset;
 	extern SRReal ColorCyclingSpeed;
+
+	extern SRReal Rotation;
+	extern SRReal StretchAngle;
+	extern SRReal StretchRatio;
+	extern glm::dmat2 TransformMatrix;
+	extern glm::dmat2 InvTransformMatrix;
 
 	extern std::string CustomFormula;
 

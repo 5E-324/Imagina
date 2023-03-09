@@ -20,6 +20,7 @@ enum class MenuID : UINT_PTR {
 	HighQuality,
 	Location,
 	IterationLimit,
+	Transformation,
 
 	IncreaseColorDensity,
 	DecreaseColorDensity,
