@@ -628,8 +628,8 @@ INT_PTR TransformProc(HWND hWndDlg, UINT message, WPARAM wParam, LPARAM /*lParam
 					Global::StretchAngle = newStretchAngle;
 					Global::StretchRatio = newStretchAmount;
 
-					SRReal sinRotation = sin(Global::Rotation);
-					SRReal cosRotation = cos(Global::Rotation);
+					SRReal sinRotation = sin(glm::radians(Global::Rotation));
+					SRReal cosRotation = cos(glm::radians(Global::Rotation));
 
 					Global::TransformMatrix = glm::dmat2(cosRotation, sinRotation, -sinRotation, cosRotation);
 					Global::TransformMatrix *= glm::dmat2(1.0, 0.0, 0.0, Global::FlipVertically ? -1.0 : 1.0);
