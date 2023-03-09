@@ -184,11 +184,6 @@ void RenderFractal(FractalContext &Context) {
 		SRReal Bottom = SRReal((diffY - td[i].FractalRect.HalfH) / View.HalfH);
 		SRReal Top = SRReal((diffY + td[i].FractalRect.HalfH) / View.HalfH);
 
-		if (Global::FlipVertically) {
-			Top = -Top;
-			Bottom = -Bottom;
-		}
-
 		PositionArray[0] = Left;
 		PositionArray[1] = Bottom;
 		PositionArray[2] = Left;
