@@ -78,6 +78,8 @@ public:
 	RelRect TexRect = {};
 	RelLocation CurrentLocation = {};
 	RelLocation Origin;
+	HRReal OriginOffsetX, OriginOffsetY;
+
 	float *Data = nullptr;
 	std::atomic_uint i = 0;
 	bool PixelReused = false;

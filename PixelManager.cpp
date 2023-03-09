@@ -61,8 +61,10 @@ template<typename T> T RoundUpToMultipleOfFour(T x) {
 
 void StandardPixelManager::Init() {
 	AspectRatio = double(Width) / double(Height);
-	Origin.Y = CurrentLocation.Y - CurrentLocation.HalfH + PixelSize * 0.5;
-	Origin.X = CurrentLocation.X - CurrentLocation.HalfH * HRReal(Width) / HRReal(Height) + PixelSize * 0.5;
+	OriginOffsetY = -CurrentLocation.HalfH + PixelSize * 0.5;
+	OriginOffsetX = -CurrentLocation.HalfH * HRReal(Width) / HRReal(Height) + PixelSize * 0.5;
+	Origin.Y = CurrentLocation.Y + OriginOffsetY;
+	Origin.X = CurrentLocation.X + OriginOffsetX;
 
 	uint32_t PassWidth = RoundUpToMultipleOfFour(Width); // TODO: Round according to pixel group size
 	uint32_t PassHeight = RoundUpToEven(Height);
@@ -532,8 +534,10 @@ void StandardPixelManager::SetLocation(RelLocation &Location) {
 	RelLocation NewOrigin;
 	HRReal HalfW = Location.HalfH * HRReal(Width) / HRReal(Height);
 	HRReal HalfH = Location.HalfH;
-	NewOrigin.X = Location.X - HalfW + NewPixelSize * 0.5;
-	NewOrigin.Y = Location.Y - HalfH + NewPixelSize * 0.5;
+	HRReal NewOriginOffsetX = -HalfW + NewPixelSize * 0.5;
+	HRReal NewOriginOffsetY = -HalfH + NewPixelSize * 0.5;
+	NewOrigin.X = Location.X + NewOriginOffsetX;
+	NewOrigin.Y = Location.Y + NewOriginOffsetY;
 
 	if (Location.HalfH == 0.5 * CurrentLocation.HalfH && PixelValid) {
 		int32_t DiffX = round(SRReal((Origin.X - NewOrigin.X) / PixelSize));
@@ -591,6 +595,8 @@ void StandardPixelManager::SetLocation(RelLocation &Location) {
 
 	PixelSize = NewPixelSize;
 	Origin = NewOrigin;
+	OriginOffsetX = NewOriginOffsetX;
+	OriginOffsetY = NewOriginOffsetY;
 	Location.X = Origin.X + HalfW - PixelSize * 0.5;
 	Location.Y = Origin.Y + HalfH - PixelSize * 0.5;
 	CurrentLocation = Location;
@@ -1085,8 +1091,10 @@ StandardGRI::~StandardGRI() {
 size_t StandardGRI::GetCoordinate(HRReal *Real, HRReal *Imaginary) {
 	if (R.abort) return 0;
 start:
-	HRReal X = R.Origin.X;
-	HRReal Y = R.Origin.Y;
+	//HRReal X = R.Origin.X;
+	//HRReal Y = R.Origin.Y;
+	HRReal X = R.CurrentLocation.X;
+	HRReal Y = R.CurrentLocation.Y;
 	if (j >= i) {
 		Pass = R.CurrentPass;
 		if (Pass >= R.PassCount) return 0;
@@ -1139,8 +1147,14 @@ start:
 		size_t Index = int64_t(R.TextureWidth) * int64_t(coord.Y + R.Passes[Pass].Y) + int64_t(coord.X + R.Passes[Pass].X);
 		Value[k] = R.Data[Index];
 
-		Real[k] = X + ((coord.X << R.Passes[Pass].PixelSizeExpX) + R.Passes[Pass].CoordOffsetX) * R.PixelSize;
-		Imaginary[k] = Y + ((coord.Y << R.Passes[Pass].PixelSizeExpY) + R.Passes[Pass].CoordOffsetY) * R.PixelSize;
+		//Real[k] = X + ((coord.X << R.Passes[Pass].PixelSizeExpX) + R.Passes[Pass].CoordOffsetX) * R.PixelSize;
+		//Imaginary[k] = Y + ((coord.Y << R.Passes[Pass].PixelSizeExpY) + R.Passes[Pass].CoordOffsetY) * R.PixelSize;
+
+		HRReal x = R.OriginOffsetX + ((coord.X << R.Passes[Pass].PixelSizeExpX) + R.Passes[Pass].CoordOffsetX) * R.PixelSize;
+		HRReal y = R.OriginOffsetY + ((coord.Y << R.Passes[Pass].PixelSizeExpY) + R.Passes[Pass].CoordOffsetY) * R.PixelSize;
+
+		Real[k] = X + Global::InvTransformMatrix[0][0] * x + Global::InvTransformMatrix[1][0] * y;
+		Imaginary[k] = Y + Global::InvTransformMatrix[0][1] * x + Global::InvTransformMatrix[1][1] * y;
 	}
 	if (!R.OverwriteReused && Value[0] == Value[0] && Value[1] == Value[1] && Value[2] == Value[2] && Value[3] == Value[3]) {
 		WriteResults(Value);
