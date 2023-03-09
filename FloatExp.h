@@ -51,7 +51,12 @@ struct FExpDouble {
 	inline constexpr FExpDouble(const double &mantissa, const int64_t &exponent, int) : Mantissa(mantissa), Exponent(exponent) {}
 
 	inline FExpDouble(const mpf_class& n) {
+#ifdef mpf_get_2exp_d
 		Exponent = mpf_get_2exp_d(&Mantissa, n.get_mpf_t());
+#else
+		Exponent = 0;
+		Mantissa = mpf_get_d_2exp((signed long *)&Exponent, n.get_mpf_t());
+#endif
 		Normalize();
 	}
 
