@@ -172,10 +172,17 @@ void RenderFractal(FractalContext &Context) {
 	for (size_t i = 0; i < NumberObtained; i++) {
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(TARGET_TEXTRUE, td[i].Texture);
-		SRReal Left = SRReal((td[i].FractalRect.X - View.X - td[i].FractalRect.HalfW) / View.HalfW);
-		SRReal Right = SRReal((td[i].FractalRect.X - View.X + td[i].FractalRect.HalfW) / View.HalfW);
-		SRReal Bottom = SRReal((td[i].FractalRect.Y - View.Y - td[i].FractalRect.HalfH) / View.HalfH);
-		SRReal Top = SRReal((td[i].FractalRect.Y - View.Y + td[i].FractalRect.HalfH) / View.HalfH);
+
+		HRReal diffXFractal = td[i].FractalRect.X - View.X;
+		HRReal diffYFractal = td[i].FractalRect.Y - View.Y;
+
+		HRReal diffX = Global::TransformMatrix[0][0] * diffXFractal + Global::TransformMatrix[1][0] * diffYFractal;
+		HRReal diffY = Global::TransformMatrix[0][1] * diffXFractal + Global::TransformMatrix[1][1] * diffYFractal;
+
+		SRReal Left = SRReal((diffX - td[i].FractalRect.HalfW) / View.HalfW);
+		SRReal Right = SRReal((diffX + td[i].FractalRect.HalfW) / View.HalfW);
+		SRReal Bottom = SRReal((diffY - td[i].FractalRect.HalfH) / View.HalfH);
+		SRReal Top = SRReal((diffY + td[i].FractalRect.HalfH) / View.HalfH);
 
 		if (Global::FlipVertically) {
 			Top = -Top;

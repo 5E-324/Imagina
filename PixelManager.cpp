@@ -855,8 +855,12 @@ void StandardPixelManager::GetTextures(TextureDescription *TD, size_t NumDesired
 #endif
 		int32_t OffsetX = Passes[Pass].CoordOffsetX;
 		int32_t OffsetY = Passes[Pass].CoordOffsetY;
-		TD[i].FractalRect.X = Origin.X + HRReal(OffsetX * 2 + ((Width - 1) << ExpX)) * 0.5 * PixelSize;
-		TD[i].FractalRect.Y = Origin.Y + HRReal(OffsetY * 2 + ((Height - 1) << ExpY)) * 0.5 * PixelSize;
+		//TD[i].FractalRect.X = Origin.X + HRReal(OffsetX * 2 + ((Width - 1) << ExpX)) * 0.5 * PixelSize;
+		//TD[i].FractalRect.Y = Origin.Y + HRReal(OffsetY * 2 + ((Height - 1) << ExpY)) * 0.5 * PixelSize;
+		HRReal diffX = OriginOffsetX + HRReal(OffsetX * 2 + ((Width - 1) << ExpX)) * 0.5 * PixelSize;
+		HRReal diffY = OriginOffsetY + HRReal(OffsetY * 2 + ((Height - 1) << ExpY)) * 0.5 * PixelSize;
+		TD[i].FractalRect.X = CurrentLocation.X + Global::InvTransformMatrix[0][0] * diffX + Global::InvTransformMatrix[1][0] * diffY;
+		TD[i].FractalRect.Y = CurrentLocation.Y + Global::InvTransformMatrix[0][1] * diffX + Global::InvTransformMatrix[1][1] * diffY;
 		if (Global::UseBilinearFilter) {
 			TD[i].FractalRect.HalfW = HRReal((Width << ExpX) - 1) * PixelSize * 0.5;
 			TD[i].FractalRect.HalfH = HRReal((Height << ExpY) - 1) * PixelSize * 0.5;
