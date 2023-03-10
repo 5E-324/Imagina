@@ -32,7 +32,7 @@ namespace Global {
 
 	SRReal Rotation = 0.0;
 	SRReal StretchAngle = 0.0;
-	SRReal StretchRatio = 0.0;
+	SRReal StretchRatio = 1.0;
 	glm::dmat2 TransformMatrix = glm::dmat2(1.0);
 	glm::dmat2 InvTransformMatrix = glm::dmat2(1.0);
 
