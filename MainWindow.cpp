@@ -604,16 +604,16 @@ INT_PTR TransformProc(HWND hWndDlg, UINT message, WPARAM wParam, LPARAM /*lParam
 				case IDOK: {
 					char buffer[32];
 					buffer[32] = 0;
-					SRReal newRotateAngle, newStretchAngle, newStretchAmount;
+					SRReal newRotation, newStretchAngle, newStretchRatio;
 					try {
 						GetDlgItemTextA(hWndDlg, IDC_ROTATION, buffer, 31);
-						newRotateAngle = std::stof(buffer);
+						newRotation = std::stof(buffer);
 
 						GetDlgItemTextA(hWndDlg, IDC_STRETCH_ANGLE, buffer, 31);
 						newStretchAngle = std::stof(buffer);
 
 						GetDlgItemTextA(hWndDlg, IDC_STRETCH_RATIO, buffer, 31);
-						newStretchAmount = std::stof(buffer);
+						newStretchRatio = std::stof(buffer);
 					} catch (std::invalid_argument) {
 						MessageBoxA(hWndDlg, "Value invalid.", nullptr, MB_OK | MB_ICONERROR);
 						break;
@@ -624,17 +624,25 @@ INT_PTR TransformProc(HWND hWndDlg, UINT message, WPARAM wParam, LPARAM /*lParam
 
 					Global::FlipVertically = SendMessage(GetDlgItem(hWndDlg, IDC_FLIP_IMAGINARY), BM_GETCHECK, (WPARAM)0, (LPARAM)0) == BST_CHECKED;
 
-					Global::Rotation = newRotateAngle;
+					Global::Rotation = newRotation;
 					Global::StretchAngle = newStretchAngle;
-					Global::StretchRatio = newStretchAmount;
+					Global::StretchRatio = newStretchRatio;
 
-					SRReal sinRotation = sin(glm::radians(Global::Rotation));
-					SRReal cosRotation = cos(glm::radians(Global::Rotation));
+					if (!Global::FlipVertically && newRotation == 0.0 && newStretchRatio == 1.0) {
+						Global::TransformMatrix = glm::dmat2(1.0);
+						Global::InvTransformMatrix = glm::dmat2(1.0);
+						Global::Transform = false;
+					} else {
+						Global::Transform = true;
 
-					Global::TransformMatrix = glm::dmat2(cosRotation, sinRotation, -sinRotation, cosRotation);
-					Global::TransformMatrix *= glm::dmat2(1.0, 0.0, 0.0, Global::FlipVertically ? -1.0 : 1.0);
+						SRReal sinRotation = sin(glm::radians(Global::Rotation));
+						SRReal cosRotation = cos(glm::radians(Global::Rotation));
 
-					Global::InvTransformMatrix = glm::inverse(Global::TransformMatrix);
+						Global::TransformMatrix = glm::dmat2(cosRotation, sinRotation, -sinRotation, cosRotation);
+						Global::TransformMatrix *= glm::dmat2(1.0, 0.0, 0.0, Global::FlipVertically ? -1.0 : 1.0);
+
+						Global::InvTransformMatrix = glm::inverse(Global::TransformMatrix);
+					}
 
 					FContext.InvalidatePixel();
 				}
