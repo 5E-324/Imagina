@@ -614,6 +614,8 @@ INT_PTR TransformProc(HWND hWndDlg, UINT message, WPARAM wParam, LPARAM /*lParam
 
 						GetDlgItemTextA(hWndDlg, IDC_STRETCH_RATIO, buffer, 31);
 						newStretchRatio = std::stof(buffer);
+
+						if (newStretchRatio == 0.0) throw std::invalid_argument("StretchRatio");
 					} catch (std::invalid_argument) {
 						MessageBoxA(hWndDlg, "Value invalid.", nullptr, MB_OK | MB_ICONERROR);
 						break;
@@ -638,7 +640,13 @@ INT_PTR TransformProc(HWND hWndDlg, UINT message, WPARAM wParam, LPARAM /*lParam
 						SRReal sinRotation = sin(glm::radians(Global::Rotation));
 						SRReal cosRotation = cos(glm::radians(Global::Rotation));
 
-						Global::TransformMatrix = glm::dmat2(cosRotation, sinRotation, -sinRotation, cosRotation);
+						SRReal sinStretchAngle = sin(glm::radians(Global::StretchAngle));
+						SRReal cosStretchAngle = cos(glm::radians(Global::StretchAngle));
+
+						Global::TransformMatrix = glm::dmat2(cosStretchAngle, sinStretchAngle, -sinStretchAngle, cosStretchAngle);
+						Global::TransformMatrix *= glm::dmat2(Global::StretchRatio, 0.0, 0.0, 1.0);
+						Global::TransformMatrix *= glm::dmat2(cosStretchAngle, -sinStretchAngle, sinStretchAngle, cosStretchAngle);
+						Global::TransformMatrix *= glm::dmat2(cosRotation, sinRotation, -sinRotation, cosRotation);
 						Global::TransformMatrix *= glm::dmat2(1.0, 0.0, 0.0, Global::FlipVertically ? -1.0 : 1.0);
 
 						Global::InvTransformMatrix = glm::inverse(Global::TransformMatrix);
