@@ -266,11 +266,6 @@ void LoadKfFile(std::istream &File, bool IsKfr) {
 
 			}
 		}
-		if (auto ImagPointsUp = Parameters.find("ImagPointsUp"); ImagPointsUp != Parameters.end()) {
-			int imagPointsUp;
-			sscanf_s(ImagPointsUp->second.c_str(), "%d", &imagPointsUp);
-			Global::FlipVertically = !imagPointsUp;
-		}
 	}
 
 	if (auto Colors = Parameters.find("Colors"); Colors != Parameters.end()) {
@@ -349,8 +344,6 @@ void SaveKfrFile(std::ostream &File) {
 		File << "ColorMethod: 0" << std::endl;
 		File << "Differences: 0" << std::endl;
 	}
-
-	File << "ImagPointsUp: " << int(!Global::FlipVertically) << std::endl;
 }
 
 // Temporary file format
@@ -479,15 +472,11 @@ void SaveImage(wchar_t *FileName) {
 	png_bytep *row_pointers = new png_bytep[height];
 	png_bytep pixData = new png_byte[width * height * 4]{ 128 };
 	memset(pixData, 128, width * height * 4);
-	if (Global::FlipVertically) {
-		for (int32_t i = 0; i < height; i++) {
-			row_pointers[i] = pixData + i * width * 4;
-		}
-	} else {
-		for (int32_t i = 0; i < height; i++) {
-			row_pointers[height - 1 - i] = pixData + i * width * 4;
-		}
+
+	for (int32_t i = 0; i < height; i++) {
+		row_pointers[height - 1 - i] = pixData + i * width * 4;
 	}
+
 	struct RGB {
 		float r, g, b;
 	};
