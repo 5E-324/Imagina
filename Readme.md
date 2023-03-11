@@ -2,6 +2,8 @@
 
 Imagina is a fast fractal renderer & explorer.
 
+_The project is being rewritten. This repository may be renamed and replaced by the rewritten version when it's available._
+
 ## Controls
 
 * Left mouse button
