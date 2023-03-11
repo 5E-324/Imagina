@@ -35,7 +35,6 @@ enum class MenuID : UINT_PTR {
 	ImageSize,
 	PaletteMipmaps,
 	BilinearFilter,
-	FlipVertically,
 	PreModulo,
 
 	FractalTypeBegin,

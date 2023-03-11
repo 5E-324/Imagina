@@ -119,7 +119,6 @@ void CreateMainWindow() {
 
 	AppendMenuW(Image, MF_STRING, (UINT_PTR)MenuID::ImageSize, L"Image size");
 	AppendMenuW(Image, MF_STRING, (UINT_PTR)MenuID::BilinearFilter, L"Bilinear filter");
-	AppendMenuW(Image, MF_STRING, (UINT_PTR)MenuID::FlipVertically, L"Flip imaginary axis");
 	AppendMenuW(Image, MF_STRING, (UINT_PTR)MenuID::PreModulo, L"Pre-modulo (workaround for precision loss)");
 
 	AppendMenuW(FractalType, MF_STRING, (UINT_PTR)MenuID::FractalTypeMandelbrot, L"Mandelbrot");
@@ -1334,12 +1333,6 @@ LRESULT CALLBACK WindowProcess(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lP
 				case (UINT_PTR)MenuID::BilinearFilter: {
 					Global::UseBilinearFilter = !Global::UseBilinearFilter;
 					CheckMenuItem(Image, (UINT_PTR)MenuID::BilinearFilter, MF_BYCOMMAND | (Global::UseBilinearFilter ? MF_CHECKED : MF_UNCHECKED));
-					Global::Redraw = true;
-					break;
-				}
-				case (UINT_PTR)MenuID::FlipVertically: {
-					Global::FlipVertically = !Global::FlipVertically;
-					CheckMenuItem(Image, (UINT_PTR)MenuID::FlipVertically, MF_BYCOMMAND | (Global::FlipVertically ? MF_CHECKED : MF_UNCHECKED));
 					Global::Redraw = true;
 					break;
 				}
