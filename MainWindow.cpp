@@ -585,7 +585,7 @@ INT_PTR TransformProc(HWND hWndDlg, UINT message, WPARAM wParam, LPARAM /*lParam
 		case WM_INITDIALOG: {
 			char buffer[32];
 			
-			SendMessage(GetDlgItem(hWndDlg, IDC_FLIP_IMAGINARY), BM_SETCHECK, (WPARAM)(Global::FlipVertically ? BST_CHECKED : BST_UNCHECKED), (LPARAM)0);
+			SendMessage(GetDlgItem(hWndDlg, IDC_FLIP_IMAGINARY), BM_SETCHECK, (WPARAM)(Global::FlipImaginaryAxis ? BST_CHECKED : BST_UNCHECKED), (LPARAM)0);
 
 			sprintf_s(buffer, "%g", Global::Rotation);
 			SetDlgItemTextA(hWndDlg, IDC_ROTATION, buffer);
@@ -623,13 +623,13 @@ INT_PTR TransformProc(HWND hWndDlg, UINT message, WPARAM wParam, LPARAM /*lParam
 						break;
 					}
 
-					Global::FlipVertically = SendMessage(GetDlgItem(hWndDlg, IDC_FLIP_IMAGINARY), BM_GETCHECK, (WPARAM)0, (LPARAM)0) == BST_CHECKED;
+					Global::FlipImaginaryAxis = SendMessage(GetDlgItem(hWndDlg, IDC_FLIP_IMAGINARY), BM_GETCHECK, (WPARAM)0, (LPARAM)0) == BST_CHECKED;
 
 					Global::Rotation = newRotation;
 					Global::StretchAngle = newStretchAngle;
 					Global::StretchRatio = newStretchRatio;
 
-					if (!Global::FlipVertically && newRotation == 0.0 && newStretchRatio == 1.0) {
+					if (!Global::FlipImaginaryAxis && newRotation == 0.0 && newStretchRatio == 1.0) {
 						Global::TransformMatrix = glm::dmat2(1.0);
 						Global::InvTransformMatrix = glm::dmat2(1.0);
 						Global::Transform = false;
@@ -646,7 +646,7 @@ INT_PTR TransformProc(HWND hWndDlg, UINT message, WPARAM wParam, LPARAM /*lParam
 						Global::TransformMatrix *= glm::dmat2(Global::StretchRatio, 0.0, 0.0, 1.0);
 						Global::TransformMatrix *= glm::dmat2(cosStretchAngle, -sinStretchAngle, sinStretchAngle, cosStretchAngle);
 						Global::TransformMatrix *= glm::dmat2(cosRotation, sinRotation, -sinRotation, cosRotation);
-						Global::TransformMatrix *= glm::dmat2(1.0, 0.0, 0.0, Global::FlipVertically ? -1.0 : 1.0);
+						Global::TransformMatrix *= glm::dmat2(1.0, 0.0, 0.0, Global::FlipImaginaryAxis ? -1.0 : 1.0);
 
 						Global::InvTransformMatrix = glm::inverse(Global::TransformMatrix);
 					}

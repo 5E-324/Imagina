@@ -10,7 +10,7 @@ namespace Global {
 	size_t ItLim = 1024;
 	uint64_t MaxIt = 1024;
 	bool UseBilinearFilter = false;
-	bool FlipVertically = false;
+	bool FlipImaginaryAxis = false;
 	bool PreModulo = false;
 	bool SizeChanged = false;
 	bool Redraw = true;

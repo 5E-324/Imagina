@@ -20,7 +20,7 @@ namespace Global {
 	extern size_t ItLim;
 	extern uint64_t MaxIt;
 	extern bool UseBilinearFilter;
-	extern bool FlipVertically;
+	extern bool FlipImaginaryAxis;
 	extern bool PreModulo;
 	extern bool SizeChanged;
 	extern bool Redraw;
