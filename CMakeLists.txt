@@ -3,6 +3,7 @@
 project ("Imagina")
 
 option(EnableCustomFormula "EnableCustomFormula" OFF)
+option(MpirUseDll "MpirUseDll" ON)
 
 FILE(GLOB SourceFiles "*.cpp")
 
@@ -19,24 +20,36 @@ set_source_files_properties("Resource.rc" PROPERTIES LANGUAGE RC)
 
 target_compile_definitions(Imagina PRIVATE UNICODE)
 
-target_include_directories(Imagina PRIVATE ".")
-include_directories(SYSTEM "include")
-target_include_directories(Imagina PRIVATE "C:/Program Files (x86)/Windows Kits/10/Include/10.0.19041.0/um")
-target_link_directories(Imagina PRIVATE "lib/x64")
+if(NOT DEFINED INCLUDE_PATH)
+	set(INCLUDE_PATH "include")
+endif()
+
+if(NOT DEFINED LIBRARY_PATH)
+	set(LIBRARY_PATH "lib")
+endif()
+
+target_include_directories(Imagina PRIVATE SYSTEM ${INCLUDE_PATH})
+target_link_directories(Imagina PRIVATE ${LIBRARY_PATH})
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    target_link_directories(Imagina PRIVATE "lib/x64/Debug")
-	include_directories(SYSTEM "include/Debug")
+	target_include_directories(Imagina PRIVATE SYSTEM "${INCLUDE_PATH}/Debug")
+    target_link_directories(Imagina PRIVATE "${LIBRARY_PATH}/Debug")
 else()
-    target_link_directories(Imagina PRIVATE "lib/x64/Release")
-	include_directories(SYSTEM "include/Release")
+	target_include_directories(Imagina PRIVATE SYSTEM "${INCLUDE_PATH}/Release")
+    target_link_directories(Imagina PRIVATE "${LIBRARY_PATH}/Release")
 endif()
 
 target_link_libraries(Imagina "opengl32")
-target_link_libraries(Imagina "mpir")
 target_link_libraries(Imagina "comctl32")
 target_link_libraries(Imagina "libpng16")
 target_link_libraries(Imagina "zlibwapi")
 target_link_libraries(Imagina "dwmapi")
+target_link_libraries(Imagina "mpir")
+
+if(MpirUseDll)
+	target_compile_definitions(Imagina PRIVATE MSC_USE_DLL)
+else()
+	target_link_libraries(Imagina "mpirxx")
+endif()
 
 if(EnableCustomFormula)
 	target_link_libraries(Imagina "mpfr")
@@ -49,7 +62,7 @@ endif()
 set_property(TARGET Imagina PROPERTY CXX_STANDARD 20)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -flto")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mavx2 -mfma")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-math-errno -DMSC_USE_DLL")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-math-errno")
 
 set_source_files_properties(HInfLAEvaluator.cpp PROPERTIES COMPILE_FLAGS "-fassociative-math -ffp-contract=fast" SKIP_PRECOMPILE_HEADERS ON)
 
