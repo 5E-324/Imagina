@@ -2,12 +2,14 @@
 
 project ("Imagina")
 
-option(EnableCustomFormula "EnableCustomFormula" OFF)
-option(MpirUseDll "MpirUseDll" ON)
+option(ENABLE_CUSTOM_FORMULA "Enable custom formula" OFF)
+option(MPIR_USE_DLL "Use dll version of MPIR" ON)
+set(INCLUDE_PATH "include" CACHE STRING "Include path")
+set(LIBRARY_PATH "lib" CACHE STRING "Library path")
 
 FILE(GLOB SourceFiles "*.cpp")
 
-if(EnableCustomFormula)
+if(ENABLE_CUSTOM_FORMULA)
 	FILE(GLOB SourceFilesEncoder "Encoder/*.cpp")
 else()
 	set(SourceFilesEncoder "")
@@ -19,14 +21,6 @@ target_precompile_headers (Imagina PRIVATE "Includes.h")
 set_source_files_properties("Resource.rc" PROPERTIES LANGUAGE RC)
 
 target_compile_definitions(Imagina PRIVATE UNICODE)
-
-if(NOT DEFINED INCLUDE_PATH)
-	set(INCLUDE_PATH "include")
-endif()
-
-if(NOT DEFINED LIBRARY_PATH)
-	set(LIBRARY_PATH "lib")
-endif()
 
 target_include_directories(Imagina PRIVATE SYSTEM ${INCLUDE_PATH})
 target_link_directories(Imagina PRIVATE ${LIBRARY_PATH})
@@ -45,13 +39,13 @@ target_link_libraries(Imagina "zlibwapi")
 target_link_libraries(Imagina "dwmapi")
 target_link_libraries(Imagina "mpir")
 
-if(MpirUseDll)
+if(MPIR_USE_DLL)
 	target_compile_definitions(Imagina PRIVATE MSC_USE_DLL)
 else()
 	target_link_libraries(Imagina "mpirxx")
 endif()
 
-if(EnableCustomFormula)
+if(ENABLE_CUSTOM_FORMULA)
 	target_link_libraries(Imagina "mpfr")
 	target_link_libraries(Imagina "mpc")
 	target_link_libraries(Imagina "symengine")
