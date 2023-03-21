@@ -16,3 +16,13 @@ _The project is being rewritten. This repository may be renamed and replaced by 
 * F - Decrease iteration limit
 * E - Cycle color forward
 * R - Cycle color backward
+
+## Build
+### Dependencies
+* mpir
+* libpng
+
+### CMake variables
+* INCLUDE_PATH Path to include files.
+* LIBRARY_PATH Path to libraries.
+* MPIR_USE_DLL Use dll version of MPIR. Default: ON (To use statically linked version, set this to OFF)
