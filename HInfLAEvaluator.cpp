@@ -825,22 +825,35 @@ bool HInfLAEvaluator::ReferenceGenerationContext<real>::CreateNewLAStage() {
 	}
 	reference.LAStageCount++; if (reference.LAStageCount > MaxLAStages) throw "Too many stages"; // FIXME
 
-	if (!Period) {
-		LAI.StepLength = reference.RefIt;
-
-		reference.LA.Append(LA);
-		reference.LAI.Append(LAI);
-
-		reference.LA.Append(LAInfo<real>(reference.Ref[reference.RefIt]));
-		reference.LAStages[CurrentStage].MacroItCount = 1;
-
-		return false;
-	}
-
 	PeriodBegin = Period;
 	PeriodEnd = PeriodBegin + Period;
 
-	if (Period > PrevStageLAI[0].StepLength * 64) {
+	if (!Period) {
+		if (reference.RefIt / PrevStageLAI[0].StepLength > 64) {
+			LA = PrevStageLA[0].Composite(PrevStageLA[1]);
+			i = PrevStageLAI[0].StepLength + PrevStageLAI[1].StepLength;
+			LAI.NextStageLAIndex = 0;
+
+			j = 2;
+
+			double Ratio = double(reference.RefIt) / PrevStageLAI[0].StepLength;
+			double NthRoot = round(log2(double(Ratio)) / 4); // log16
+			Period = PrevStageLAI[0].StepLength * (size_t)round(pow(double(Ratio), 1.0 / NthRoot));
+
+			PeriodBegin = 0;
+			PeriodEnd = Period;
+		} else {
+			LAI.StepLength = reference.RefIt;
+
+			reference.LA.Append(LA);
+			reference.LAI.Append(LAI);
+
+			reference.LA.Append(LAInfo<real>(reference.Ref[reference.RefIt]));
+			reference.LAStages[CurrentStage].MacroItCount = 1;
+
+			return false;
+		}
+	} else if (Period > PrevStageLAI[0].StepLength * 64) {
 		reference.LA.Pop();
 		reference.LAI.Pop();
 
@@ -850,7 +863,9 @@ bool HInfLAEvaluator::ReferenceGenerationContext<real>::CreateNewLAStage() {
 
 		j = 2;
 
-		Period = PrevStageLAI[0].StepLength * (size_t)round(sqrt(double(Period) / PrevStageLAI[0].StepLength));
+		double Ratio = double(Period) / PrevStageLAI[0].StepLength;
+		double NthRoot = round(log2(double(Ratio)) / 4); // log16
+		Period = PrevStageLAI[0].StepLength * (size_t)round(pow(double(Ratio), 1.0 / NthRoot));
 
 		PeriodBegin = 0;
 		PeriodEnd = Period;
