@@ -440,6 +440,9 @@ void SaveFile(wchar_t *FileName, FileType Type) {
 }
 
 void SaveImage(wchar_t *FileName) {
+#ifdef USE_BASIC_PIXEL_MANAGER
+	MessageBoxW(nullptr, L"Unsupported", nullptr, MB_OK | MB_TASKMODAL | MB_ICONERROR);
+#else
 	int32_t width = FContext.pixelManager.Width, height = FContext.pixelManager.Height;
 
 	FILE *fp;
@@ -530,9 +533,13 @@ void SaveImage(wchar_t *FileName) {
 	fclose(fp);
 
 	png_destroy_write_struct(&png, &info);
+#endif
 }
 
 void SaveRawPixelData(wchar_t *FileName) {
+#ifdef USE_BASIC_PIXEL_MANAGER
+	MessageBoxW(nullptr, L"Unsupported", nullptr, MB_OK | MB_TASKMODAL | MB_ICONERROR);
+#else
 	std::ofstream File(FileName, std::ofstream::out | std::ofstream::binary);
 
 	int32_t width = FContext.pixelManager.Width, height = FContext.pixelManager.Height;
@@ -546,4 +553,5 @@ void SaveRawPixelData(wchar_t *FileName) {
 	}
 
 	File.close();
+#endif
 }

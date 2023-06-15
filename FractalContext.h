@@ -23,7 +23,11 @@ public:
 	bool UsingDE = true;
 	bool UsingLA = true;
 
+#ifdef USE_BASIC_PIXEL_MANAGER
+	BasicPixelManager pixelManager;
+#else
 	StandardPixelManager pixelManager;
+#endif
 	bool ComputePixel = true, CenterChanged = true, EvaluationPending = true, LocationChanged = true;
 	bool RecomputeReference, ParameterChanged;
 	bool NeedReference = false;

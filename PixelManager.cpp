@@ -51,6 +51,101 @@ void PixelManager::FreeInterface(GroupedRasterizingInterface &Interface) {
 
 void PixelManager::Abort() {}
 
+BasicPixelManager::BasicPixelManager() {
+	PixelCount = Width * Height;
+	i = PixelCount;
+	Data = new float[PixelCount];
+}
+
+BasicPixelManager::~BasicPixelManager() {
+	if (Data) delete[]Data;
+	if (TextureID) glDeleteTextures(1, &TextureID);
+}
+
+void BasicPixelManager::Clear() {
+	memset(Data, 0xFF, PixelCount * sizeof(float));
+}
+
+void BasicPixelManager::SetResolution(int32_t width, int32_t height) {
+	Width = width;
+	Height = height;
+	PixelCount = Width * Height;
+	if (Data) delete[]Data;
+	if (TextureID) glDeleteTextures(1, &TextureID);
+	TextureID = 0;
+	Data = new float[PixelCount];
+}
+
+void BasicPixelManager::UpdateRelativeCoordinate(HRReal OffsetX, HRReal OffsetY) {
+	//TexRect.X += OffsetX;
+	//TexRect.Y += OffsetY;
+	CurrentLocation.X += OffsetX;
+	CurrentLocation.Y += OffsetY;
+}
+
+void BasicPixelManager::SetLocation(RelLocation &Location) {
+	CurrentLocation = Location;
+	//Clear();
+}
+
+void BasicPixelManager::Begin() {
+	i = 0;
+}
+
+RasterizingInterface &BasicPixelManager::GetInterface() {
+	return *new Interface(*this);
+}
+
+bool BasicPixelManager::Completed() {
+	return i >= PixelCount;
+}
+
+void BasicPixelManager::Abort() {
+	i = PixelCount;
+}
+
+void BasicPixelManager::GetTextures(TextureDescription *TD, size_t NumDesired, size_t &NumObtained) {
+	if (!NumDesired) return;
+
+	if (!TextureID) {
+		glGenTextures(1, &TextureID);
+		glBindTexture(TARGET_TEXTRUE, TextureID);
+		glTexParameteri(TARGET_TEXTRUE, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(TARGET_TEXTRUE, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(TARGET_TEXTRUE, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(TARGET_TEXTRUE, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexImage2D(TARGET_TEXTRUE, 0, GL_R32F, Width, Height, 0, GL_RED, GL_FLOAT, Data);
+	} else {
+		glBindTexture(TARGET_TEXTRUE, TextureID);
+		glTexSubImage2D(TARGET_TEXTRUE, 0, 0, 0, Width, Height, GL_RED, GL_FLOAT, Data);
+	}
+
+	TD[0].Texture = TextureID;
+
+#ifdef USE_GL_TEXTURE_RECTANGLE
+	TD[0].TextureRect = { 0.0, 0.0, (SRReal)Width, (SRReal)Height };
+#else
+	TD[0].TextureRect = { 0.0, 0.0, 1.0, 1.0 };
+#endif
+	TD[0].FractalRect.X = CurrentLocation.X;
+	TD[0].FractalRect.Y = CurrentLocation.Y;
+	TD[0].FractalRect.HalfH = CurrentLocation.HalfH;
+	TD[0].FractalRect.HalfW = CurrentLocation.HalfH * HRReal(Width) / HRReal(Height);
+	NumObtained = 1;
+}
+bool BasicPixelManager::Interface::GetCoordinate(HRReal &Real, HRReal &Imaginary) {
+	uint32_t i = R.i++;
+	if (i >= R.PixelCount) return false;
+	x = i % R.Width;
+	y = i / R.Width;
+	Real = (HRReal(x * 2 + 1 - int32_t(R.Width)) / HRReal(R.Height)) * R.CurrentLocation.HalfH + R.CurrentLocation.X;
+	Imaginary = (HRReal(y * 2 + 1 - int32_t(R.Height)) / HRReal(R.Height)) * R.CurrentLocation.HalfH + R.CurrentLocation.Y;
+	return true;
+}
+void BasicPixelManager::Interface::WriteResults(SRReal Value) {
+	R.Data[y * R.Width + x] = Value;
+}
+
 template<typename T> T RoundUpToEven(T x) {
 	return (x + T(1)) & ~T(1);
 }

@@ -336,7 +336,9 @@ void FractalContext::Update() {
 			RenderLocation = CurrentLocation;
 			RemainingZoomTime = 0.0;
 			Zooming = false;
+#ifndef USE_BASIC_PIXEL_MANAGER
 			pixelManager.RemovePrevTextures();
+#endif
 			if (EvalLocation.HalfH != CurrentLocation.HalfH) {
 				EvalLocation = CurrentLocation;
 				ComputePixel = true;
@@ -405,12 +407,17 @@ void FractalContext::Update() {
 				RenderLocation.Y = EvalLocation.Y;
 			}
 		}
+#ifndef USE_BASIC_PIXEL_MANAGER
 		if (!Zooming) pixelManager.RemovePrevTextures();
+#endif
 		LocationChanged = false;
 
 		if (Global::ItLim != OldMaxIt) {
+#ifndef USE_BASIC_PIXEL_MANAGER
 			if (Global::ItLim > OldMaxIt) pixelManager.ChangeMaxit(OldMaxIt);
-			else if ((CurrentFractalType == FractalTypeEnum::Mandelbrot && UsingDE && UsingLA)
+			else
+#endif
+			if ((CurrentFractalType == FractalTypeEnum::Mandelbrot && UsingDE && UsingLA)
 				|| (CurrentFractalType == FractalTypeEnum::Nova && UsingDE)
 				|| Global::PreModulo) pixelManager.Clear();
 			//pixelManager.Clear();

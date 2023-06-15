@@ -217,3 +217,41 @@ public:
 	virtual size_t GetCoordinate(HRReal *Real, HRReal *Imaginary) override;
 	virtual void WriteResults(SRReal *Values) override;
 };
+
+class BasicPixelManager : public PixelManager {
+public:
+	GLuint TextureID = 0;
+	RelLocation CurrentLocation = {};
+	//RelRect TexRect = {};
+	float *Data = nullptr;
+	std::atomic_uint i = 0;
+	uint32_t Width = 2560, Height = 1440;
+	size_t PixelCount;
+	class Interface : public RasterizingInterface {
+		BasicPixelManager &R;
+		int32_t x, y;
+
+	public:
+		inline Interface(BasicPixelManager &r) : R(r) {}
+		virtual bool GetCoordinate(HRReal &Real, HRReal &Imaginary) override;
+		virtual void WriteResults(SRReal Value) override;
+	};
+
+	BasicPixelManager();
+	virtual ~BasicPixelManager() override;
+
+	virtual void Clear() override;
+	virtual void SetResolution(int32_t Width, int32_t Height) override;
+	virtual void UpdateRelativeCoordinate(HRReal OffsetX, HRReal OffsetY) override;
+	virtual void SetLocation(RelLocation &Location) override;
+	virtual void Begin() override;
+
+	virtual RasterizingInterface &GetInterface() override;
+	//virtual TempRasterizerInterfaceVec4 &GetInterfaceVec4();
+	//virtual void FreeInterface(RasterizingInterface &Interface) override;
+	//virtual void FreeInterface(TempRasterizerInterfaceVec4 &Interface);
+	virtual bool Completed() override;
+	virtual void Abort() override;
+
+	virtual void GetTextures(TextureDescription *TD, size_t NumDesired, size_t &NumObtained) override;
+};
