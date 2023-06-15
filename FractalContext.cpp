@@ -10,6 +10,7 @@ void FractalContext::UpdateRelativeCoordinate(HRReal OffsetX, HRReal OffsetY) {
 std::chrono::high_resolution_clock::time_point PrevFrameTime;
 
 void FractalContext::FindFeature(SRReal CenterX, SRReal CenterY) {
+#ifdef ENABLE_FEATURE_FINDER
 	delete Feature;
 	Feature = nullptr;
 	Evaluator::FeatureFinder *featureFinder = evaluator->GetFeatureFinder();
@@ -53,6 +54,7 @@ void FractalContext::FindFeature(SRReal CenterX, SRReal CenterY) {
 			}
 		}
 	}
+#endif
 }
 
 void FractalContext::ZoomIn(SRReal CenterX, SRReal CenterY) {
@@ -109,11 +111,14 @@ void FractalContext::ChangeLocation(RelLocation NewLocation) {
 	if (LockReference && (abs(NewLocation.X) > NewLocation.HalfH * 0x1p20_hr || abs(NewLocation.Y) > NewLocation.HalfH * HRReal(1ull << 20))) {
 		return;
 	}
+#ifdef ANIMATED_ZOOM
 	if (NewLocation.HalfH <= CurrentLocation.HalfH * 0.5_hr || NewLocation.HalfH >= CurrentLocation.HalfH * 2.0_hr) {
 		Zooming = true;
 		RemainingZoomTime = 0.25;
 		PrevFrameTime = std::chrono::high_resolution_clock::now();
-	} else {
+	} else 
+#endif
+	{
 		RenderLocation = NewLocation;
 		EvalLocation = NewLocation;
 		ComputePixel = true;
@@ -122,6 +127,7 @@ void FractalContext::ChangeLocation(RelLocation NewLocation) {
 }
 
 void FractalContext::ZoomToAnimated(Coordinate newCenterCoordinate, size_t precision, HRReal halfH) {
+#ifdef ANIMATED_ZOOM
 	HRReal Ratio = CurrentLocation.HalfH / halfH;
 	SRReal DepthDiff = log2(Ratio);
 
@@ -159,6 +165,9 @@ void FractalContext::ZoomToAnimated(Coordinate newCenterCoordinate, size_t preci
 
 	SetDefaultPrecision(precision);
 	InvalidateReference();
+#else
+	SetLocation(newCenterCoordinate, precision, halfH);
+#endif
 }
 
 void FractalContext::SetLocation(Coordinate newCenterCoordinate, size_t precision, HRReal halfH) {
