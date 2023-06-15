@@ -1,7 +1,7 @@
 #pragma once
 
-#define USE_BASIC_PIXEL_MANAGER
+//#define USE_BASIC_PIXEL_MANAGER
 
-//#define ANIMATED_ZOOM
+#define ANIMATED_ZOOM
 
-//#define ENABLE_FEATURE_FINDER
+#define ENABLE_FEATURE_FINDER
