@@ -10,6 +10,7 @@
 #define IDD_CUSTOM_FORMULA              109
 #define IDD_FEATURE_FINDER              111
 #define IDD_TRANSFORMATION              113
+#define IDD_REFERENCE_SAVING            117
 #define IDC_EDIT1                       1000
 #define IDC_EDIT2                       1001
 #define IDC_IMAGINARY                   1001
@@ -34,15 +35,17 @@
 #define IDC_CHECK1                      1018
 #define IDC_RELATIVE                    1018
 #define IDC_FLIP_IMAGINARY              1018
+#define IDC_INCLUDE_REFERENCE           1018
 #define IDC_STRETCH_RATIO               1020
+#define IDC_QUALITY_SLIDER              1021
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        117
+#define _APS_NEXT_RESOURCE_VALUE        119
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1021
+#define _APS_NEXT_CONTROL_VALUE         1022
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

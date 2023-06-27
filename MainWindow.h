@@ -15,6 +15,7 @@ enum class MenuID : UINT_PTR {
 	Save,
 	SaveImage,
 	SaveRawPixelData,
+	ReferenceSaving,
 
 	DistanceEstimation,
 	HighQuality,

@@ -39,4 +39,7 @@ namespace Global {
 	std::string CustomFormula = "z^2 + c";
 
 	bool HighQuality = true;
+
+	bool SaveReference = true;
+	int ReferenceQuality = 40;
 }

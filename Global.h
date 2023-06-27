@@ -42,4 +42,7 @@ namespace Global {
 	extern std::string CustomFormula;
 
 	extern bool HighQuality;
+
+	extern bool SaveReference;
+	extern int ReferenceQuality;
 }

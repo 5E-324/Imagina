@@ -359,7 +359,7 @@ void SaveImFile(std::ostream &File) {
 	mpf_out_raw_stream(File, FContext.CenterCoordinate.Y);
 
 	uint64_t ReferenceOffset = File.tellp();
-	if (FContext.evaluator->SaveReference(File, FContext.reference)) { // FIXME
+	if (Global::SaveReference && FContext.evaluator->SaveReference(File, FContext.reference)) { // FIXME
 		Header.ReferenceOffset = ReferenceOffset;
 	} else {
 		Header.ReferenceOffset = 0;

@@ -64,6 +64,7 @@ template<typename real, typename orbitreal> void HInfLAEvaluator::SaveCompressed
 	size_t PrevExtendedIteration = 0;
 	size_t NextExtendedIteration = 0;
 	size_t ExtendedLAIndex = 0;
+	double Threshold = 1ULL << Global::ReferenceQuality;
 
 	if constexpr (RecoverHRValue) {
 		if (Ref.LAStages[Ref.LAStageCount - 1].UseDoublePrecision) throw ""; // FIXME
@@ -108,7 +109,7 @@ template<typename real, typename orbitreal> void HInfLAEvaluator::SaveCompressed
 			z = GetZ(i);
 			WayPoints.Append(WayPoint{ z, i, true });
 			break;
-		} else if (ChebyshevNorm(z - GetZ(i)) * 0x1.0p40 > ChebyshevNorm(GetZ(i))) {
+		} else if (ChebyshevNorm(z - GetZ(i)) * Threshold > ChebyshevNorm(GetZ(i))) {
 			z = GetZ(i);
 			WayPoints.Append(WayPoint{ z, i, false });
 		}
@@ -122,7 +123,7 @@ template<typename real, typename orbitreal> void HInfLAEvaluator::SaveCompressed
 	size_t j = 1;
 	for (; i <= Ref.RefIt; i++, j++) {
 		z = dz + GetZ(j);
-		if (j >= PrevWayPointIteration || ChebyshevNorm(z - GetZ(i)) * 0x1.0p40 > ChebyshevNorm(GetZ(i))) { // TODO: Use a different threshold for uncorrectable parts of the orbit.
+		if (j >= PrevWayPointIteration || ChebyshevNorm(z - GetZ(i)) * Threshold > ChebyshevNorm(GetZ(i))) { // TODO: Use a different threshold for uncorrectable parts of the orbit.
 			PrevWayPointIteration = i;
 			z = GetZ(i);
 			dz = z - GetZ(j);

@@ -1,4 +1,5 @@
 #include "Includes.h"
+#include <CommCtrl.h>
 #include <fstream>
 #include <iomanip>
 #include <unordered_map>
@@ -96,6 +97,8 @@ void CreateMainWindow() {
 	AppendMenuW(File, MF_STRING, (UINT_PTR)MenuID::Save, L"Save\tCtrl+S");
 	AppendMenuW(File, MF_STRING, (UINT_PTR)MenuID::SaveImage, L"Save image\tCtrl+Shift+S");
 	AppendMenuW(File, MF_STRING, (UINT_PTR)MenuID::SaveRawPixelData, L"Save raw pixel data");
+	AppendMenuW(File, MF_SEPARATOR, 0, nullptr);
+	AppendMenuW(File, MF_STRING, (UINT_PTR)MenuID::ReferenceSaving, L"Reference saving settings");
 
 	AppendMenuW(Fractal, MF_POPUP, (UINT_PTR)FractalType, L"Formula");
 	AppendMenuW(Fractal, MF_STRING | MF_CHECKED, (UINT_PTR)MenuID::DistanceEstimation, L"Distance estimation");
@@ -347,6 +350,43 @@ void SaveImage(bool raw = false) {
 	} else {
 		SaveImage(FileName);
 	}
+}
+
+INT_PTR ReferenceSavingProc(HWND hWndDlg, UINT message, WPARAM wParam, LPARAM /*lParam*/) {
+	switch (message) {
+		case WM_INITDIALOG: {
+			HWND Slider = GetDlgItem(hWndDlg, IDC_QUALITY_SLIDER);
+
+			SendMessage(GetDlgItem(hWndDlg, IDC_INCLUDE_REFERENCE), BM_SETCHECK, (WPARAM)(Global::SaveReference ? BST_CHECKED : BST_UNCHECKED), (LPARAM)0);
+			SendMessageA(Slider, (UINT)TBM_SETRANGE, FALSE, MAKELONG(32, 48));
+			SendMessageA(Slider, (UINT)TBM_SETTICFREQ, 4, 0);
+			SendMessageA(Slider, (UINT)TBM_SETPOS, TRUE, Global::ReferenceQuality);
+			EnableWindow(Slider, (BOOL)Global::SaveReference);
+		}
+		case WM_COMMAND: {
+			switch (LOWORD(wParam)) {
+				case IDC_RELATIVE: {
+					if (HIWORD(wParam) == BN_CLICKED) {
+						bool IncludeReference = SendMessage(GetDlgItem(hWndDlg, IDC_RELATIVE), BM_GETCHECK, (WPARAM)0, (LPARAM)0) == BST_CHECKED;
+
+						EnableWindow(GetDlgItem(hWndDlg, IDC_QUALITY_SLIDER), (BOOL)IncludeReference);
+					}
+					break;
+				}
+				case IDOK: {
+					Global::SaveReference = SendMessage(GetDlgItem(hWndDlg, IDC_INCLUDE_REFERENCE), BM_GETCHECK, (WPARAM)0, (LPARAM)0) == BST_CHECKED;
+					Global::ReferenceQuality = SendMessage(GetDlgItem(hWndDlg, IDC_QUALITY_SLIDER), TBM_GETPOS, (WPARAM)0, (LPARAM)0);
+				}
+				[[fallthrough]];
+				case IDCANCEL: {
+					EndDialog(hWndDlg, wParam);
+					return TRUE;
+				}
+			}
+			break;
+		}
+	}
+	return 0;
 }
 
 INT_PTR SetFormulaProc(HWND hWndDlg, UINT message, WPARAM wParam, LPARAM /*lParam*/) {
@@ -1202,6 +1242,10 @@ LRESULT CALLBACK WindowProcess(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lP
 				}
 				case (UINT_PTR)MenuID::SaveRawPixelData: {
 					SaveImage(true);
+					break;
+				}
+				case (UINT_PTR)MenuID::ReferenceSaving: {
+					DialogBox(nullptr, MAKEINTRESOURCE(IDD_REFERENCE_SAVING), HWnd, ReferenceSavingProc);
 					break;
 				}
 				case (UINT_PTR)MenuID::FractalTypeMandelbrot: {
