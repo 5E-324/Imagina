@@ -597,25 +597,35 @@ bool HInfLAEvaluator::ReferenceGenerationContext<real>::CreateLAFromOrbit_MT(HRR
 
 	reference.LAStageCount = 1;
 
-	if (!Period) {
-		LAI.StepLength = reference.RefIt;
-
-		reference.LA.Append(LA);
-		reference.LAI.Append(LAI);
-
-		reference.LA.Append(LAInfo<real>(reference.Ref[reference.RefIt]));
-
-		reference.LAStages[0].MacroItCount = 1;
-		reference.LA.ShrinkToFit();
-		reference.LAI.ShrinkToFit();
-
-		return false;
-	}
-
 	size_t PeriodBegin = Period;
 	size_t PeriodEnd = PeriodBegin + Period;
 
-	if (Period > 64) {
+	if (!Period) {
+		if (reference.RefIt > 64) {
+			LA = LAInfo<real>(reference.Ref[0]).Step(reference.Ref[1]);
+			LAI.NextStageLAIndex = 0;
+			i = 2;
+
+			double NthRoot = round(log2(double(reference.RefIt)) / 4); // log16
+			Period = round(pow(double(reference.RefIt), 1.0 / NthRoot));
+
+			PeriodBegin = 0;
+			PeriodEnd = Period;
+		} else {
+			LAI.StepLength = reference.RefIt;
+
+			reference.LA.Append(LA);
+			reference.LAI.Append(LAI);
+
+			reference.LA.Append(LAInfo<real>(reference.Ref[reference.RefIt]));
+
+			reference.LAStages[0].MacroItCount = 1;
+			reference.LA.ShrinkToFit();
+			reference.LAI.ShrinkToFit();
+
+			return false;
+		}
+	} else if (Period > 64) {
 		reference.LA.Pop();
 		reference.LAI.Pop();
 
@@ -623,7 +633,8 @@ bool HInfLAEvaluator::ReferenceGenerationContext<real>::CreateLAFromOrbit_MT(HRR
 		LAI.NextStageLAIndex = 0;
 		i = 2;
 
-		Period = round(sqrt(double(Period)));
+		double NthRoot = round(log2(double(Period)) / 4); // log16
+		Period = round(pow(double(Period), 1.0 / NthRoot));
 
 		PeriodBegin = 0;
 		PeriodEnd = Period;
