@@ -673,12 +673,12 @@ bool HInfLAEvaluator::ReferenceGenerationContext<real>::CreateLAFromOrbit_MT(HRR
 					LA = LAInfo<real>(reference.Ref[i]).Step(reference.Ref[i + 1]);
 					i++;
 				}
-				if (i > reference.RefIt / ThreadCount) {
+				if (PeriodBegin > reference.RefIt / ThreadCount) {
 					while (!Start[1]);
-					if (i == Start[1] - 1) {
-						i++;
+					if (PeriodBegin == Start[1]) {
+						//i++;
 						break;
-					} else if (i >= Start[1]) {
+					} else if (i > Start[1]) {
 						throw "";
 					}
 				}
@@ -690,16 +690,19 @@ bool HInfLAEvaluator::ReferenceGenerationContext<real>::CreateLAFromOrbit_MT(HRR
 	auto Worker = [Period, &Start, &LAs, &LAIs, this](size_t ThreadID) {
 		size_t j = reference.RefIt * ThreadID / ThreadCount;
 		size_t End = reference.RefIt * (ThreadID + 1) / ThreadCount;
+
+		size_t PeriodBegin = j;
+		size_t PeriodEnd = j + Period;
+
+		size_t DiscardCount = 2;
+
 		LAInfo<real> LA_ = LAInfo<real>(reference.Ref[j]);
 		LA_ = LA_.Step(reference.Ref[j + 1]);
 		LAInfoI LAI_;
 		LAI_.NextStageLAIndex = j;
 		j += 2;
 
-		size_t PeriodBegin;
-		size_t PeriodEnd;
-
-		for (; j < reference.RefIt; j++) {
+		/*for (; j < reference.RefIt; j++) {
 			LAInfo<real> NewLA;
 			bool PeriodDetected = LA_.Step(NewLA, reference.Ref[j]);
 
@@ -719,7 +722,7 @@ bool HInfLAEvaluator::ReferenceGenerationContext<real>::CreateLAFromOrbit_MT(HRR
 			}
 			LA_ = NewLA;
 		}
-		Start[ThreadID] = j;
+		Start[ThreadID] = j;*/
 		for (; j < reference.RefIt; j++) {
 			LAInfo<real> NewLA;
 			bool PeriodDetected = LA_.Step(NewLA, reference.Ref[j]);
@@ -727,8 +730,12 @@ bool HInfLAEvaluator::ReferenceGenerationContext<real>::CreateLAFromOrbit_MT(HRR
 			if (PeriodDetected || j >= PeriodEnd) {
 				LAI_.StepLength = j - PeriodBegin;
 
-				LAs[ThreadID].Append(LA_);
-				LAIs[ThreadID].Append(LAI_);
+				if_likely (DiscardCount == 0) {
+					LAs[ThreadID].Append(LA_);
+					LAIs[ThreadID].Append(LAI_);
+				} else if (PeriodDetected && --DiscardCount == 0) {
+					Start[ThreadID] = j;
+				}
 
 				LAI_.NextStageLAIndex = j;
 				PeriodBegin = j;
@@ -739,13 +746,13 @@ bool HInfLAEvaluator::ReferenceGenerationContext<real>::CreateLAFromOrbit_MT(HRR
 					LA_ = LAInfo<real>(reference.Ref[j]).Step(reference.Ref[j + 1]);
 					j++;
 				}
-				if (j > End) {
+				if (PeriodBegin > End) {
 					if (ThreadID == ThreadCount - 1) throw "";
 					while (!Start[ThreadID + 1]);
-					if (j == Start[ThreadID + 1] - 1) {
-						j++;
+					if (PeriodBegin == Start[ThreadID + 1]) {
+						//j++;
 						break;
-					} else if (j >= Start[ThreadID + 1]) {
+					} else if (PeriodBegin > Start[ThreadID + 1]) {
 						throw "";
 					}
 				}
