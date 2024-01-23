@@ -678,7 +678,7 @@ bool HInfLAEvaluator::ReferenceGenerationContext<real>::CreateLAFromOrbit_MT(HRR
 					if (PeriodBegin == Start[1]) {
 						//i++;
 						break;
-					} else if (i > Start[1]) {
+					} else if (PeriodBegin > Start[1]) {
 						throw "";
 					}
 				}
