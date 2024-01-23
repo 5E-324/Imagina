@@ -118,7 +118,6 @@ struct LAInfo {
 		out.LAThreshold = std::min(LAThreshold, ChebyMagz / ChebyMagZCoeff * LAThresholdScale);
 		out.LAThresholdC = std::min(LAThresholdC, ChebyMagz / ChebyMagCCoeff * LAThresholdCScale);
 		out.ZCoeff = (Real)2.0 * z * ZCoeff;
-		Real RescaleFactor = out.LAThreshold / LAThreshold;
 		out.CCoeff = (Real)2.0 * z * CCoeff;
 		ChebyMagZCoeff = ChebyshevNorm(out.ZCoeff);
 		ChebyMagCCoeff = ChebyshevNorm(out.CCoeff);
@@ -126,7 +125,6 @@ struct LAInfo {
 		out.LAThreshold = std::min(out.LAThreshold, LA.LAThreshold / ChebyMagZCoeff);
 		out.LAThresholdC = std::min(out.LAThresholdC, LA.LAThreshold / ChebyMagCCoeff);
 		out.ZCoeff = out.ZCoeff * LA.ZCoeff;
-		RescaleFactor = out.LAThreshold / temp;
 		out.CCoeff = out.CCoeff * LA.ZCoeff + LA.CCoeff;
 		out.Ref = Ref;
 
