@@ -230,6 +230,13 @@ size_t HInfLAEvaluator::SaveReference(std::ostream &stream, const Reference *ref
 	const LAReference<> &Ref = *static_cast<const LAReference<>*>(reference);
 	const LAReference<double> &DPRef = *static_cast<const LAReference<double>*>(reference);
 
+	// A direct-evaluate reference (the starting view, or an orbit shorter than
+	// eight iterations) has no orbit array.  SaveCompressedOrbit would read
+	// Orbit[0] from reserved but uncommitted memory and crash.  Returning 0
+	// makes SaveFile store ReferenceOffset = 0, so the reference is generated
+	// again when the file is opened.
+	if (Ref.DirectEvaluate || Ref.RefIt == 0 || Ref.Ref.size() == 0) return 0;
+
 	ReferenceHeader Header;
 
 	Header.ExtendedRange = !Ref.DoublePrecisionPT || (Ref.LAStageCount && !Ref.LAStages[Ref.LAStageCount - 1].UseDoublePrecision);
