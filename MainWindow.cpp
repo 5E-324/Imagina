@@ -642,7 +642,6 @@ INT_PTR TransformProc(HWND hWndDlg, UINT message, WPARAM wParam, LPARAM /*lParam
 			switch (LOWORD(wParam)) {
 				case IDOK: {
 					char buffer[32];
-					buffer[32] = 0;
 					SRReal newRotation, newStretchAngle, newStretchRatio;
 					try {
 						GetDlgItemTextA(hWndDlg, IDC_ROTATION, buffer, 31);
